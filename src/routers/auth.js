@@ -3,17 +3,17 @@ import { validateBody } from '../middlewares/validateBody.js';
 import {
   registerSchema,
   loginSchema,
-  sendResetEmailSchema,
-  resetPasswordSchema,
+  // sendResetEmailSchema,
+  // resetPasswordSchema,
 } from '../validation/auth.js';
 
 import {
   registerUserController,
   loginUserController,
-  refreshSessionController,
-  logoutController,
-  sendResetEmailController,
-  resetPasswordController,
+  refreshUserSessionController,
+  logoutUserController,
+  // sendResetEmailController,
+  // resetPasswordController,
 } from '../controllers/auth.js';
 
 export const authRouter = Router();
@@ -25,19 +25,19 @@ authRouter.post(
 );
 authRouter.post('/login', validateBody(loginSchema), loginUserController);
 
-// отправка письма на сброс
-authRouter.post(
-  '/send-reset-email',
-  validateBody(sendResetEmailSchema),
-  sendResetEmailController,
-);
+// // отправка письма на сброс
+// authRouter.post(
+//   '/send-reset-email',
+//   validateBody(sendResetEmailSchema),
+//   sendResetEmailController,
+// );
 
-// собственно сброс пароля
-authRouter.post(
-  '/reset-pwd',
-  validateBody(resetPasswordSchema),
-  resetPasswordController,
-);
+// //  сброс пароля
+// authRouter.post(
+//   '/reset-pwd',
+//   validateBody(resetPasswordSchema),
+//   resetPasswordController,
+// );
 
-authRouter.post('/refresh', refreshSessionController);
-authRouter.post('/logout', logoutController);
+authRouter.post('/refresh', refreshUserSessionController);
+authRouter.post('/logout', logoutUserController);
