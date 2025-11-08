@@ -1,29 +1,38 @@
 import createHttpError from 'http-errors';
-import { Session } from '../models/session.js';
-import { User } from '../models/userModel.js';
+import { findSession, findUser } from '../services/auth.js';
 
-export async function authenticate(req, _res, next) {
-  const auth = req.get('authorization') || '';
-  const [, token] = auth.split(' ');
+export const authenticate = async (req, res, next) => {
+  const authHeader = req.get('Authorization');
+  let accessToken;
 
-  if (!token) {
-    return next(new createHttpError.Unauthorized('No access token'));
+  if (authHeader) {
+    const [bearer, token] = authHeader.split(' ');
+    if (bearer !== 'Bearer') {
+      return next(createHttpError(401, 'Auth header should be of type Bearer'));
+    }
+    accessToken = token;
+  } else {
+    accessToken = req.cookies?.accessToken;
   }
 
-  const session = await Session.findOne({ accessToken: token });
+  if (!accessToken) {
+    return next(createHttpError(401, 'No access token'));
+  }
+
+  const session = await findSession({ accessToken });
   if (!session) {
-    return next(new createHttpError.Unauthorized('Not authorized'));
+    return next(createHttpError(401, 'Session not found'));
   }
 
-  if (session.accessTokenValidUntil.getTime() <= Date.now()) {
-    return next(new createHttpError.Unauthorized('Access token expired'));
+  if (session.accessTokenValidUntil < new Date()) {
+    return next(createHttpError(401, 'Access token expired'));
   }
 
-  const user = await User.findById(session.userId).lean();
+  const user = await findUser({ _id: session.userId });
   if (!user) {
-    return next(new createHttpError.Unauthorized('Not authorized'));
+    return next(createHttpError(401, 'Not authorized'));
   }
 
   req.user = user;
   next();
-}
+};
