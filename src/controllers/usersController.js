@@ -1,4 +1,4 @@
-import { User } from '../models/userModel.js';
+import { UserCollection } from '../models/userModel.js';
 import Article from '../models/articleModel.js';
 
 //  1. Публічний ендпоінт — отримати список користувачів (авторів) + пагінація
@@ -8,12 +8,12 @@ export const getUsers = async (req, res, next) => {
         const limit = parseInt(req.query.limit) || 10;
         const skip = (page - 1) * limit;
 
-        const users = await User.find()
+        const users = await UserCollection.find()
             .select('name email avatarURL')
             .skip(skip)
             .limit(limit);
 
-        const total = await User.countDocuments();
+        const total = await UserCollection.countDocuments();
 
         res.status(200).json({
             total,
@@ -31,7 +31,7 @@ export const getUserById = async (req, res, next) => {
     try {
         const { userId } = req.params;
 
-        const user = await User.findById(userId).select('name email avatarURL');
+        const user = await UserCollection.findById(userId).select('name email avatarURL');
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
@@ -50,7 +50,7 @@ export const getUserById = async (req, res, next) => {
 export const getCurrentUser = async (req, res, next) => {
     try {
         const { id } = req.user;
-        const user = await User.findById(id).select('name email avatarURL savedArticles');
+        const user = await UserCollection.findById(id).select('name email avatarURL savedArticles');
 
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
@@ -68,7 +68,7 @@ export const addSavedArticle = async (req, res, next) => {
         const { articleId } = req.params;
         const { id } = req.user;
 
-        const user = await User.findById(id);
+        const user = await UserCollection.findById(id);
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
@@ -92,7 +92,7 @@ export const removeSavedArticle = async (req, res, next) => {
         const { articleId } = req.params;
         const { id } = req.user;
 
-        const user = await User.findById(id);
+        const user = await UserCollection.findById(id);
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
@@ -118,7 +118,7 @@ export const updateAvatar = async (req, res, next) => {
             return res.status(400).json({ message: 'avatarURL is required' });
         }
 
-        const user = await User.findByIdAndUpdate(
+        const user = await UserCollection.findByIdAndUpdate(
             id,
             { avatarURL },
             { new: true }
@@ -139,7 +139,7 @@ export const updateUser = async (req, res, next) => {
         const { id } = req.user;
         const { name, email } = req.body;
 
-        const user = await User.findByIdAndUpdate(
+        const user = await UserCollection.findByIdAndUpdate(
             id,
             { name, email },
             { new: true }
