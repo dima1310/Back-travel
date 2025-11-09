@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { User } from '../models/userModel.js';
+import { UserCollection } from '../models/userModel.js';
 
 const { JWT_SECRET = 'your_jwt_secret' } = process.env;
 
@@ -20,7 +20,7 @@ export const authMiddleware = async (req, res, next) => {
             return res.status(401).json({ message: 'Invalid token' });
         }
 
-        const user = await User.findById(payload.id);
+        const user = await UserCollection.findById(payload.id);
         if (!user) return res.status(401).json({ message: 'User not found' });
 
         req.user = { id: user._id, email: user.email, name: user.name };
