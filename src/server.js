@@ -1,93 +1,46 @@
-import bcrypt from 'bcrypt';
-import createHttpError from 'http-errors';
-import { randomBytes } from 'node:crypto';
-import { UserCollection } from '../models/userModel.js';
-import { SessionsCollection } from '../models/session.js';
+import express from 'express';
+import cors from 'cors';
+import pino from 'pino-http';
 
-// Термін дії токенів
-const ACCESS_TTL_MS = 15 * 60 * 1000; // 15 хвилин
-const REFRESH_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 днів
+import { errorHandler } from './middlewares/errorHandler.js';
+import { notFoundHandler } from './middlewares/notFoundHandler.js';
+import usersRouter from './routes/usersRouter.js';
+import articlesRouter from './routes/articlesRouter.js';
 
-// Генерація токенів сесії
-const createSession = () => ({
-  accessToken: randomBytes(30).toString('base64'),
-  refreshToken: randomBytes(30).toString('base64'),
-  accessTokenValidUntil: new Date(Date.now() + ACCESS_TTL_MS),
-  refreshTokenValidUntil: new Date(Date.now() + REFRESH_TTL_MS),
-});
+const PORT = Number(process.env.PORT) || 3000;
 
-// Хелпери
-export const findSession = (query) => SessionsCollection.findOne(query);
-export const findUser = (query) => UserCollection.findOne(query);
+export const startServer = () => {
+  const app = express();
 
-// Реєстрація користувача
-export const registerUser = async (data) => {
-  const { email, password } = data;
+  app.use(express.json());
+  app.use(cors());
 
-  const existingUser = await UserCollection.findOne({ email });
-  if (existingUser) {
-    throw createHttpError(409, 'Email already in use');
-  }
+  app.use(
+    pino({
+      transport: {
+        target: 'pino-pretty',
+        options: { colorize: true },
+      },
+    }),
+  );
 
-  const hashedPassword = await bcrypt.hash(password, 10);
+  // маршрути
+  app.use('/api/users', usersRouter);
+  app.use('/api/articles', articlesRouter);
 
-  const newUser = await UserCollection.create({
-    ...data,
-    password: hashedPassword,
+  app.get('/', (req, res) => {
+    res.json({ message: 'Server is running' });
   });
 
-  return {
-    name: newUser.name,
-    email: newUser.email,
-  };
-};
+  app.use(notFoundHandler);
+  app.use(errorHandler);
 
-// Вхід користувача
-export const loginUser = async ({ email, password }) => {
-  const user = await UserCollection.findOne({ email });
-  if (!user) {
-    throw createHttpError(401, 'User not found');
-  }
-
-  const isPasswordValid = await bcrypt.compare(password, user.password);
-  if (!isPasswordValid) {
-    throw createHttpError(401, 'Unauthorized');
-  }
-
-  // Видаляємо стару сесію, якщо вона була
-  await SessionsCollection.deleteOne({ userId: user._id });
-
-  const session = createSession();
-
-  return await SessionsCollection.create({
-    userId: user._id,
-    ...session,
+  app.listen(PORT, () => {
+    console.log(`🚀 Server is running on port ${PORT}`);
+    console.log(`📍 Available at: http://localhost:${PORT}`);
   });
+
+  return app;
 };
 
-// Оновлення токенів
-export const refreshUsersSession = async ({ sessionId, refreshToken }) => {
-  const oldSession = await findSession({ _id: sessionId, refreshToken });
-  if (!oldSession) {
-    throw createHttpError(401, 'Session not found');
-  }
-
-  if (oldSession.refreshTokenValidUntil < new Date()) {
-    throw createHttpError(401, 'Session token expired');
-  }
-
-  await SessionsCollection.findByIdAndDelete(oldSession._id);
-
-  const newSession = createSession();
-
-  return await SessionsCollection.create({
-    userId: oldSession.userId,
-    ...newSession,
-  });
-};
-
-// Вихід користувача
-export const logoutUser = async (sessionId) => {
-  await SessionsCollection.deleteOne({ _id: sessionId });
-};
 
