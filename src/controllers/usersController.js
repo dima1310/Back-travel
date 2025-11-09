@@ -9,7 +9,11 @@ export const getUsers = async (req, res, next) => {
         const skip = (page - 1) * limit;
 
         const users = await UserCollection.find()
+<<<<<<< HEAD
             .select('name email avatar')
+=======
+            .select('name email avatarURL')
+>>>>>>> main
             .skip(skip)
             .limit(limit);
 
@@ -31,7 +35,11 @@ export const getUserById = async (req, res, next) => {
     try {
         const { userId } = req.params;
 
+<<<<<<< HEAD
         const user = await UserCollection.findById(userId).select('name email avatar');
+=======
+        const user = await UserCollection.findById(userId).select('name email avatarURL');
+>>>>>>> main
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
@@ -50,9 +58,13 @@ export const getUserById = async (req, res, next) => {
 export const getCurrentUser = async (req, res, next) => {
     try {
         const { id } = req.user;
+<<<<<<< HEAD
         const user = await UserCollection.findById(id).select(
             'name email avatar savedStories'
         );
+=======
+        const user = await UserCollection.findById(id).select('name email avatarURL savedArticles');
+>>>>>>> main
 
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
