@@ -1,5 +1,3 @@
-
-
 import { model, Schema } from 'mongoose';
 
 const userSchema = new Schema(
@@ -27,6 +25,7 @@ const userSchema = new Schema(
   { timestamps: true, versionKey: false },
 );
 
+// При серіалізації користувача (наприклад, при відповіді API) пароль не повертається
 userSchema.methods.toJSON = function () {
   const obj = this.toObject();
   delete obj.password;
@@ -34,3 +33,4 @@ userSchema.methods.toJSON = function () {
 };
 
 export const UserCollection = model('user', userSchema);
+
