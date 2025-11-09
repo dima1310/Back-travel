@@ -1,7 +1,7 @@
 import { UserCollection } from '../models/userModel.js';
 import Article from '../models/articleModel.js';
 
-//  1. Публічний ендпоінт — отримати список користувачів (авторів) + пагінація
+// 1. Публічний ендпоінт — отримати список користувачів (авторів) + пагінація
 export const getUsers = async (req, res, next) => {
     try {
         const page = parseInt(req.query.page) || 1;
@@ -9,7 +9,11 @@ export const getUsers = async (req, res, next) => {
         const skip = (page - 1) * limit;
 
         const users = await UserCollection.find()
+<<<<<<< HEAD
+            .select('name email avatar')
+=======
             .select('name email avatarURL')
+>>>>>>> main
             .skip(skip)
             .limit(limit);
 
@@ -26,12 +30,16 @@ export const getUsers = async (req, res, next) => {
     }
 };
 
-//  2. Публічний ендпоінт — отримати користувача за ID + список його статей
+// 2. Публічний ендпоінт — отримати користувача за ID + список його статей
 export const getUserById = async (req, res, next) => {
     try {
         const { userId } = req.params;
 
+<<<<<<< HEAD
+        const user = await UserCollection.findById(userId).select('name email avatar');
+=======
         const user = await UserCollection.findById(userId).select('name email avatarURL');
+>>>>>>> main
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
@@ -46,11 +54,17 @@ export const getUserById = async (req, res, next) => {
     }
 };
 
-//  3. Приватний ендпоінт — отримати інформацію про поточного користувача
+// 3. Приватний ендпоінт — отримати інформацію про поточного користувача
 export const getCurrentUser = async (req, res, next) => {
     try {
         const { id } = req.user;
+<<<<<<< HEAD
+        const user = await UserCollection.findById(id).select(
+            'name email avatar savedStories'
+        );
+=======
         const user = await UserCollection.findById(id).select('name email avatarURL savedArticles');
+>>>>>>> main
 
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
@@ -62,7 +76,7 @@ export const getCurrentUser = async (req, res, next) => {
     }
 };
 
-//  4. Приватний ендпоінт — додати статтю до збережених статей
+// 4. Приватний ендпоінт — додати статтю до збережених статей
 export const addSavedArticle = async (req, res, next) => {
     try {
         const { articleId } = req.params;
@@ -73,11 +87,11 @@ export const addSavedArticle = async (req, res, next) => {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        if (user.savedArticles.includes(articleId)) {
+        if (user.savedStories.includes(articleId)) {
             return res.status(400).json({ message: 'Article already saved' });
         }
 
-        user.savedArticles.push(articleId);
+        user.savedStories.push(articleId);
         await user.save();
 
         res.status(200).json({ message: 'Article added to saved list' });
@@ -86,7 +100,7 @@ export const addSavedArticle = async (req, res, next) => {
     }
 };
 
-//  5. Приватний ендпоінт — видалити статтю зі збережених
+// 5. Приватний ендпоінт — видалити статтю зі збережених
 export const removeSavedArticle = async (req, res, next) => {
     try {
         const { articleId } = req.params;
@@ -97,7 +111,7 @@ export const removeSavedArticle = async (req, res, next) => {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        user.savedArticles = user.savedArticles.filter(
+        user.savedStories = user.savedStories.filter(
             (a) => a.toString() !== articleId
         );
         await user.save();
@@ -108,21 +122,21 @@ export const removeSavedArticle = async (req, res, next) => {
     }
 };
 
-//  6. Приватний ендпоінт — оновлення аватару користувача
+// 6. Приватний ендпоінт — оновлення аватару користувача
 export const updateAvatar = async (req, res, next) => {
     try {
         const { id } = req.user;
-        const { avatarURL } = req.body;
+        const { avatar } = req.body;
 
-        if (!avatarURL) {
-            return res.status(400).json({ message: 'avatarURL is required' });
+        if (!avatar) {
+            return res.status(400).json({ message: 'avatar is required' });
         }
 
         const user = await UserCollection.findByIdAndUpdate(
             id,
-            { avatarURL },
+            { avatar },
             { new: true }
-        ).select('name email avatarURL');
+        ).select('name email avatar');
 
         res.status(200).json({
             message: 'Avatar updated successfully',
@@ -133,7 +147,7 @@ export const updateAvatar = async (req, res, next) => {
     }
 };
 
-//  7. Приватний ендпоінт — оновлення даних користувача
+// 7. Приватний ендпоінт — оновлення даних користувача
 export const updateUser = async (req, res, next) => {
     try {
         const { id } = req.user;
@@ -143,7 +157,7 @@ export const updateUser = async (req, res, next) => {
             id,
             { name, email },
             { new: true }
-        ).select('name email avatarURL');
+        ).select('name email avatar');
 
         res.status(200).json({
             message: 'User data updated successfully',

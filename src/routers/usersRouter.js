@@ -12,10 +12,12 @@ import { authMiddleware } from '../middlewares/authMiddleware.js';
 
 const router = Router();
 
+// Публічні
 router.get('/', getUsers);
+router.get('/current', authMiddleware, getCurrentUser); // 👈 вище!
 router.get('/:userId', getUserById);
 
-router.get('/current', authMiddleware, getCurrentUser);
+// Приватні
 router.patch('/update', authMiddleware, updateUser);
 router.patch('/avatar', authMiddleware, updateAvatar);
 router.post('/saved/:articleId', authMiddleware, addSavedArticle);
