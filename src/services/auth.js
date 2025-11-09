@@ -4,10 +4,11 @@ import { randomBytes } from 'node:crypto';
 import { UserCollection } from '../models/userModel.js';
 import { SessionsCollection } from '../models/session.js';
 
+// Час життя токенів
+const ACCESS_TTL_MS = 15 * 60 * 1000; // 15 хвилин
+const REFRESH_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 днів
 
-const ACCESS_TTL_MS = 15 * 60 * 1000;
-const REFRESH_TTL_MS = 30 * 24 * 60 * 60 * 1000;
-
+// Генерація токенів сесії
 const createSession = () => ({
   accessToken: randomBytes(30).toString('base64'),
   refreshToken: randomBytes(30).toString('base64'),
@@ -15,22 +16,24 @@ const createSession = () => ({
   refreshTokenValidUntil: new Date(Date.now() + REFRESH_TTL_MS),
 });
 
+// Хелпери пошуку
 export const findSession = (query) => SessionsCollection.findOne(query);
 export const findUser = (query) => UserCollection.findOne(query);
 
+// Реєстрація користувача
 export const registerUser = async (data) => {
   const { email, password } = data;
 
-  const user = await UserCollection.findOne({ email });
-  if (user) {
+  const existingUser = await UserCollection.findOne({ email });
+  if (existingUser) {
     throw createHttpError(409, 'Email already in use');
   }
 
-  const hashPassword = await bcrypt.hash(password, 10);
+  const hashedPassword = await bcrypt.hash(password, 10);
 
   const newUser = await UserCollection.create({
     ...data,
-    password: hashPassword,
+    password: hashedPassword,
   });
 
   return {
@@ -39,17 +42,19 @@ export const registerUser = async (data) => {
   };
 };
 
+// Логін користувача
 export const loginUser = async ({ email, password }) => {
   const user = await UserCollection.findOne({ email });
   if (!user) {
     throw createHttpError(401, 'User not found');
   }
 
-  const isEqual = await bcrypt.compare(password, user.password);
-  if (!isEqual) {
+  const isPasswordValid = await bcrypt.compare(password, user.password);
+  if (!isPasswordValid) {
     throw createHttpError(401, 'Unauthorized');
   }
 
+  // Видалення старих сесій (одна активна сесія на користувача)
   await SessionsCollection.deleteOne({ userId: user._id });
 
   const session = createSession();
@@ -60,6 +65,7 @@ export const loginUser = async ({ email, password }) => {
   });
 };
 
+// Оновлення сесії
 export const refreshUsersSession = async ({ sessionId, refreshToken }) => {
   const oldSession = await findSession({ _id: sessionId, refreshToken });
   if (!oldSession) {
@@ -70,6 +76,7 @@ export const refreshUsersSession = async ({ sessionId, refreshToken }) => {
     throw createHttpError(401, 'Session token expired');
   }
 
+  // Видаляємо стару і створюємо нову сесію
   await SessionsCollection.findByIdAndDelete(oldSession._id);
 
   const newSession = createSession();
@@ -80,6 +87,8 @@ export const refreshUsersSession = async ({ sessionId, refreshToken }) => {
   });
 };
 
+// Вихід користувача
 export const logoutUser = async (sessionId) => {
   await SessionsCollection.deleteOne({ _id: sessionId });
 };
+
