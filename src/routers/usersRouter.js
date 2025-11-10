@@ -3,8 +3,8 @@ import {
     getUsers,
     getUserById,
     getCurrentUser,
-    addSavedArticle,
-    removeSavedArticle,
+    addSavedStory,
+    removeSavedStory,
     updateUser,
     updateAvatar,
 } from '../controllers/usersController.js';
@@ -20,7 +20,7 @@ router.get('/:userId', getUserById);
 // Приватні
 router.patch('/update', authMiddleware, updateUser);
 router.patch('/avatar', authMiddleware, updateAvatar);
-router.post('/saved/:articleId', authMiddleware, addSavedArticle);
-router.delete('/saved/:articleId', authMiddleware, removeSavedArticle);
+router.post('/saved/:storyId', authMiddleware, addSavedStory);
+router.delete('/saved/:storyId', authMiddleware, removeSavedStory);
 
 export default router;

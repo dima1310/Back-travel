@@ -7,7 +7,7 @@ import { errorHandler } from "./middlewares/errorHandler.js";
 import { notFoundHandler } from "./middlewares/notFoundHandler.js";
 
 import usersRouter from "./routers/usersRouter.js";
-import articlesRouter from "./routers/articlesRouter.js";
+import storiesRouter from "./routers/storiesRouter.js";
 import { authRouter } from "./routers/auth.js";
 
 const PORT = Number(process.env.PORT) || 3000;
@@ -31,7 +31,7 @@ export const startServer = () => {
 
   // 🚏 Маршрути
   app.use("/users", usersRouter);
-  app.use("/articles", articlesRouter);
+  app.use("/stories", storiesRouter);
   app.use("/auth", authRouter);
 
   // 🏠 Кореневий маршрут
