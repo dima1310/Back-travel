@@ -1,157 +1,212 @@
 import { UserCollection } from '../models/userModel.js';
 import storyModel from '../models/storyModel.js';
+import Article from '../models/articleModel.js';
+import createHttpError from 'http-errors';
 
-// 1. Публічний ендпоінт — отримати список користувачів (авторів) + пагінація
+// GET /users  — публичный список авторов + пагинация
 export const getUsers = async (req, res, next) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
+    const page = Number.parseInt(req.query.page) || 1;
+    const limit = Number.parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
-    const users = await UserCollection.find()
-      .select('name email avatarURL')
-      .skip(skip)
-      .limit(limit);
-
-    const total = await UserCollection.countDocuments();
+    const [total, users] = await Promise.all([
+      UserCollection.countDocuments(),
+      UserCollection.find()
+        .select('name email avatar bio')
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+    ]);
 
     res.status(200).json({
-      total,
-      page,
-      totalPages: Math.ceil(total / limit),
-      users,
+      status: 200,
+      message: 'Successfully found users!',
+      data: {
+        users,
+        page,
+        perPage: limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
     });
   } catch (error) {
     next(error);
   }
 };
 
-// 2. Публічний ендпоінт — отримати користувача за ID + список його статей
+// GET /users/:userId — публично: данные автора + его статьи
 export const getUserById = async (req, res, next) => {
   try {
     const { userId } = req.params;
 
-    const user = await UserCollection.findById(userId).select(
-      'name email avatarURL',
-    );
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
+    const user = await UserCollection.findById(userId)
+      .select('name email avatar bio socialLinks')
+      .lean();
+    if (!user) throw createHttpError(404, 'User not found');
 
-    const story = await storyModel.find({ author: userId }).select(
-      'title summary publishedAt',
-    );
+    const articles = await Article.find({ ownerId: userId })
+      .select('title article img date favoriteCount category ownerId')
+      .populate('category', 'name')
+      .lean();
 
-    res.status(200).json({ user, story });
-  } catch (error) {
-    next(error);
-  }
-};
-
-// 3. Приватний ендпоінт — отримати інформацію про поточного користувача
-export const getCurrentUser = async (req, res, next) => {
-  try {
-    const { id } = req.user;
-    const user = await UserCollection.findById(id).select(
-      'name email avatarURL savedArticles',
-    );
-
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    res.status(200).json(user);
-  } catch (error) {
-    next(error);
-  }
-};
-
-// 4. Приватний ендпоінт — додати статтю до збережених статей
-export const addSavedStory = async (req, res, next) => {
-  try {
-    const { storyId } = req.params;
-    const { id } = req.user;
-
-    const user = await UserCollection.findById(id);
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    if (user.savedStories.includes(storyId)) {
-      return res.status(400).json({ message: 'Story already saved' });
-    }
-
-    user.savedStories.push(storyId);
-    await user.save();
-
-    res.status(200).json({ message: 'Story added to saved list' });
-  } catch (error) {
-    next(error);
-  }
-};
-
-// 5. Приватний ендпоінт — видалити статтю зі збережених
-export const removeSavedStory = async (req, res, next) => {
-  try {
-    const { storyId } = req.params;
-    const { id } = req.user;
-
-    const user = await UserCollection.findById(id);
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    user.savedStories = user.savedStories.filter(
-      (a) => a.toString() !== storyId,
-    );
-    await user.save();
-
-    res.status(200).json({ message: 'Story removed from saved list' });
-  } catch (error) {
-    next(error);
-  }
-};
-
-// 6. Приватний ендпоінт — оновлення аватару користувача
-export const updateAvatar = async (req, res, next) => {
-  try {
-    const { id } = req.user;
-    const { avatar } = req.body;
-
-    if (!avatar) {
-      return res.status(400).json({ message: 'avatar is required' });
-    }
-
-    const user = await UserCollection.findByIdAndUpdate(
-      id,
-      { avatar },
-      { new: true },
-    ).select('name email avatar');
+    const mapped = articles.map((a) => {
+      a.owner = {
+        _id: userId,
+        name: user.name,
+        avatar: user.avatar,
+        bio: user.bio,
+      };
+      delete a.ownerId;
+      return a;
+    });
 
     res.status(200).json({
-      message: 'Avatar updated successfully',
-      user,
+      status: 200,
+      message: 'Successfully found user and articles!',
+      data: { user, articles: mapped },
     });
   } catch (error) {
     next(error);
   }
 };
 
-// 7. Приватний ендпоінт — оновлення даних користувача
-export const updateUser = async (req, res, next) => {
+// GET /users/current — приватно: текущий пользователь
+export const getCurrentUser = async (req, res, next) => {
   try {
-    const { id } = req.user;
-    const { name, email } = req.body;
+    const userId = req.user._id || req.user.id;
+
+    const user = await UserCollection.findById(userId)
+      .select('name email avatar bio savedStories settings socialLinks')
+      .populate({
+        path: 'savedStories',
+        model: 'Article',
+        select: 'title img date favoriteCount',
+      })
+      .lean();
+
+    if (!user) throw createHttpError(404, 'User not found');
+
+    res.status(200).json({
+      status: 200,
+      message: 'Successfully found current user!',
+      data: user,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// POST /users/saved/:articleId — приватно: добавить в сохранённые
+export const addSavedArticle = async (req, res, next) => {
+  try {
+    const { articleId } = req.params;
+    const userId = req.user._id || req.user.id;
+
+    const user = await UserCollection.findById(userId);
+    if (!user) throw createHttpError(404, 'User not found');
+
+    if (user.savedStories.some((id) => id.toString() === articleId)) {
+      return res
+        .status(400)
+        .json({ status: 400, message: 'Article already saved' });
+    }
+
+    user.savedStories.push(articleId);
+    await user.save();
+
+    // по желанию: инкрементировать счетчик у статьи
+    await Article.findByIdAndUpdate(articleId, { $inc: { favoriteCount: 1 } });
+
+    res
+      .status(200)
+      .json({ status: 200, message: 'Article added to saved list' });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// DELETE /users/saved/:articleId — приватно: удалить из сохранённых
+export const removeSavedArticle = async (req, res, next) => {
+  try {
+    const { articleId } = req.params;
+    const userId = req.user._id || req.user.id;
+
+    const user = await UserCollection.findById(userId);
+    if (!user) throw createHttpError(404, 'User not found');
+
+    const before = user.savedStories.length;
+    user.savedStories = user.savedStories.filter(
+      (id) => id.toString() !== articleId,
+    );
+    if (user.savedStories.length === before) {
+      return res
+        .status(404)
+        .json({ status: 404, message: 'Article was not in saved list' });
+    }
+
+    await user.save();
+    await Article.findByIdAndUpdate(articleId, { $inc: { favoriteCount: -1 } });
+
+    res
+      .status(200)
+      .json({ status: 200, message: 'Article removed from saved list' });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// PATCH /users/avatar — приватно: обновить аватар
+export const updateAvatar = async (req, res, next) => {
+  try {
+    const userId = req.user._id || req.user.id;
+
+    let avatarUrl = req.body.avatar;
+    if (req.file) {
+      const { saveFileToCloudinary } = await import(
+        '../utils/saveFileToCloudinary.js'
+      );
+      avatarUrl = await saveFileToCloudinary(req.file);
+    }
+    if (!avatarUrl)
+      return res
+        .status(400)
+        .json({ status: 400, message: 'Avatar is required' });
 
     const user = await UserCollection.findByIdAndUpdate(
-      id,
-      { name, email },
-      { new: true },
+      userId,
+      { avatar: avatarUrl },
+      { new: true, runValidators: true },
     ).select('name email avatar');
 
     res.status(200).json({
+      status: 200,
+      message: 'Avatar updated successfully',
+      data: user,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// PATCH /users/update — приватно: обновить данные пользователя
+export const updateUser = async (req, res, next) => {
+  try {
+    const userId = req.user._id || req.user.id;
+    const patch = {};
+    if (typeof req.body.name === 'string') patch.name = req.body.name.trim();
+    if (typeof req.body.email === 'string') patch.email = req.body.email.trim();
+    if (typeof req.body.bio === 'string') patch.bio = req.body.bio.trim();
+
+    const user = await UserCollection.findByIdAndUpdate(userId, patch, {
+      new: true,
+      runValidators: true,
+    }).select('name email avatar bio');
+
+    res.status(200).json({
+      status: 200,
       message: 'User data updated successfully',
-      user,
+      data: user,
     });
   } catch (error) {
     next(error);
