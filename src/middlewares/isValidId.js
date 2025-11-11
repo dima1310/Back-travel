@@ -7,6 +7,7 @@ export const isValidId = (req, _res, next) => {
     req.params.storyId ||
     req.params.userId ||
     req.params.articleId;
+
   if (id && !isValidObjectId(id)) {
     return next(createHttpError(400, `${id} is not a valid id`));
   }

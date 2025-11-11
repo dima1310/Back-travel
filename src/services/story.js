@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import createHttpError from 'http-errors';
 import storyModel from '../models/storyModel.js';
 import { CategoriesCollection } from '../models/categories.js';
@@ -6,7 +7,7 @@ const STORY_SORT_FIELDS = ['favoriteCount', 'date'];
 const SORT_ORDER = ['asc', 'desc'];
 
 const parseIntOr = (v, d) => {
-  const n = parseInt(v);
+  const n = parseInt(v, 10);
   return Number.isNaN(n) ? d : n;
 };
 
@@ -21,6 +22,26 @@ const parseSort = (q) => {
   return { sortBy, sortOrder };
 };
 
+const mapDoc = (doc) => {
+  const o = doc.toObject ? doc.toObject() : structuredClone(doc);
+
+  if (!o.description && o.article) o.description = o.article;
+
+  if (o.ownerId && typeof o.ownerId === 'object') {
+    o.owner = {
+      _id: o.ownerId._id,
+      name: o.ownerId.name,
+      avatar: o.ownerId.avatarUrl ?? '',
+      bio: o.ownerId.description ?? '',
+    };
+  } else {
+    o.owner = o.ownerId;
+  }
+  delete o.ownerId;
+
+  return o;
+};
+
 export const getAllStories = async (query) => {
   const { page, perPage } = parsePagination(query);
   const { sortBy, sortOrder } = parseSort(query);
@@ -28,13 +49,20 @@ export const getAllStories = async (query) => {
 
   const filter = {};
   if (query.category) {
-    filter.category = query.category;
+    if (mongoose.isValidObjectId(query.category)) {
+      filter.category = query.category;
+    } else {
+      const cat = await CategoriesCollection.findOne({
+        name: query.category,
+      }).lean();
+      filter.category = cat ? cat._id : '__no_match__';
+    }
   }
 
   const findQ = storyModel
     .find(filter)
     .populate('category', 'name')
-    .populate('ownerId', 'name avatar bio')
+    .populate('ownerId', 'name avatarUrl description')
     .sort({ [sortBy]: sortOrder === 'asc' ? 1 : -1 })
     .skip(skip)
     .limit(perPage);
@@ -44,12 +72,7 @@ export const getAllStories = async (query) => {
     findQ,
   ]);
 
-  const data = stories.map((doc) => {
-    const o = doc.toObject();
-    o.owner = o.ownerId;
-    delete o.ownerId;
-    return o;
-  });
+  const data = stories.map(mapDoc);
 
   return {
     data,
@@ -66,14 +89,10 @@ export const getStoryById = async (storyId) => {
   const doc = await storyModel
     .findById(storyId)
     .populate('category', 'name')
-    .populate('ownerId', 'name avatar bio')
-    .lean();
+    .populate('ownerId', 'name avatarUrl description');
 
   if (!doc) return null;
-
-  doc.owner = doc.ownerId;
-  delete doc.ownerId;
-  return doc;
+  return mapDoc(doc);
 };
 
 export const createStory = async (payload) => {

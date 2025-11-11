@@ -1,3 +1,4 @@
+// src/routers/usersRouter.js
 import { Router } from 'express';
 import {
   getUsers,
@@ -23,9 +24,12 @@ import {
 
 const router = Router();
 
+// public
 router.get('/', validateQuery(getUsersQuerySchema), getUsers);
-router.get('/current', authenticate, getCurrentUser);
 router.get('/:userId', isValidId, getUserById);
+
+// private
+router.get('/current', authenticate, getCurrentUser);
 
 router.patch(
   '/update',
@@ -42,7 +46,7 @@ router.patch(
   updateAvatar,
 );
 
-router.post('/saved/:articleId', authenticate, isValidId, addSavedArticle);
-router.delete('/saved/:articleId', authenticate, isValidId, removeSavedArticle);
+router.post('/saved-story/:id', authenticate, isValidId, addSavedArticle);
+router.delete('/saved-story/:id', authenticate, isValidId, removeSavedArticle);
 
 export default router;

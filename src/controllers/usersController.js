@@ -1,24 +1,33 @@
+import createHttpError from 'http-errors';
+import { SeedUser } from '../models/seedUserModel.js';
 import { UserCollection } from '../models/userModel.js';
 import storyModel from '../models/storyModel.js';
-import createHttpError from 'http-errors';
 
-// GET /users
+const toInt = (val, def) => {
+  const n = parseInt(val, 10);
+  return Number.isFinite(n) && n > 0 ? n : def;
+};
+
 export const getUsers = async (req, res, next) => {
   try {
-    const page = Number.parseInt(req.query.page) || 1;
-    const perPage = Number.parseInt(req.query.limit) || 10;
+    const page = toInt(req.query.page, 1);
+    const perPage = Math.min(toInt(req.query.limit, 10), 50);
     const skip = (page - 1) * perPage;
 
-    const [total, users] = await Promise.all([
-      UserCollection.countDocuments(),
-      UserCollection.find()
-        .select('name email avatar bio')
-        .skip(skip)
-        .limit(perPage)
-        .lean(),
+    const [total, usersRaw] = await Promise.all([
+      SeedUser.countDocuments(),
+      SeedUser.find().sort({ name: 1 }).skip(skip).limit(perPage).lean(),
     ]);
 
-    res.status(200).json({
+    const users = usersRaw.map((u) => ({
+      _id: u._id,
+      name: u.name,
+      email: '', // в сид-сущности нет email
+      avatar: u.avatarUrl ?? '',
+      bio: u.description ?? '',
+    }));
+
+    res.json({
       status: 200,
       message: 'Successfully found users!',
       data: {
@@ -34,47 +43,60 @@ export const getUsers = async (req, res, next) => {
   }
 };
 
-// GET /users/:userId
 export const getUserById = async (req, res, next) => {
   try {
     const { userId } = req.params;
 
-    const user = await UserCollection.findById(userId)
-      .select('name email avatar bio socialLinks')
-      .lean();
-    if (!user) throw createHttpError(404, 'User not found');
+    const u = await SeedUser.findById(userId).lean();
+    if (!u) throw createHttpError(404, 'User not found');
+
+    const user = {
+      _id: u._id,
+      name: u.name,
+      email: '',
+      avatar: u.avatarUrl ?? '',
+      bio: u.description ?? '',
+      socialLinks: {},
+    };
 
     const stories = await storyModel
       .find({ ownerId: userId })
-      .select('title description img date favoriteCount category ownerId')
+      .select(
+        'title description article img date favoriteCount category ownerId',
+      )
       .populate('category', 'name')
       .lean();
 
-    const mapped = stories.map((s) => {
-      s.owner = {
+    const mapped = stories.map((s) => ({
+      _id: s._id,
+      img: s.img,
+      title: s.title,
+      description: s.description ?? s.article ?? '',
+      date: s.date,
+      favoriteCount: s.favoriteCount ?? 0,
+      category: s.category,
+      owner: {
         _id: userId,
         name: user.name,
         avatar: user.avatar,
         bio: user.bio,
-      };
-      delete s.ownerId;
-      return s;
-    });
+      },
+    }));
 
-    res.status(200).json({
+    res.json({
       status: 200,
       message: 'Successfully found user and stories!',
-      data: { user, stories: mapped },
+      data: { user, articles: mapped },
     });
   } catch (error) {
     next(error);
   }
 };
 
-// GET /users/current
 export const getCurrentUser = async (req, res, next) => {
   try {
-    const userId = req.user._id || req.user.id;
+    const userId = req.user?._id || req.user?.id;
+    if (!userId) throw createHttpError(401, 'Unauthorized');
 
     const user = await UserCollection.findById(userId)
       .select('name email avatar bio savedStories settings socialLinks')
@@ -87,7 +109,7 @@ export const getCurrentUser = async (req, res, next) => {
 
     if (!user) throw createHttpError(404, 'User not found');
 
-    res.status(200).json({
+    res.json({
       status: 200,
       message: 'Successfully found current user!',
       data: user,
@@ -97,16 +119,79 @@ export const getCurrentUser = async (req, res, next) => {
   }
 };
 
-// POST /users/saved/:articleId
+export const updateUser = async (req, res, next) => {
+  try {
+    const userId = req.user?._id || req.user?.id;
+    if (!userId) throw createHttpError(401, 'Unauthorized');
+
+    const patch = {};
+    if (typeof req.body.name === 'string') patch.name = req.body.name.trim();
+    if (typeof req.body.email === 'string') patch.email = req.body.email.trim();
+    if (typeof req.body.bio === 'string') patch.bio = req.body.bio.trim();
+    if (req.body.socialLinks) patch.socialLinks = req.body.socialLinks;
+
+    const user = await UserCollection.findByIdAndUpdate(userId, patch, {
+      new: true,
+      runValidators: true,
+    }).select('name email avatar bio socialLinks');
+
+    if (!user) throw createHttpError(404, 'User not found');
+
+    res.json({
+      status: 200,
+      message: 'User data updated successfully',
+      data: user,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateAvatar = async (req, res, next) => {
+  try {
+    const userId = req.user?._id || req.user?.id;
+    if (!userId) throw createHttpError(401, 'Unauthorized');
+
+    let avatarUrl = req.body.avatar;
+    if (req.file) {
+      const { saveFileToCloudinary } = await import(
+        '../utils/saveFileToCloudinary.js'
+      );
+      avatarUrl = await saveFileToCloudinary(req.file);
+    }
+    if (!avatarUrl) {
+      throw createHttpError(400, 'Avatar is required');
+    }
+
+    const user = await UserCollection.findByIdAndUpdate(
+      userId,
+      { avatar: avatarUrl },
+      { new: true, runValidators: true },
+    ).select('name email avatar');
+
+    if (!user) throw createHttpError(404, 'User not found');
+
+    res.json({
+      status: 200,
+      message: 'Avatar updated successfully',
+      data: user,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const addSavedArticle = async (req, res, next) => {
   try {
-    const { articleId } = req.params; // storyId фактически
-    const userId = req.user._id || req.user.id;
+    const userId = req.user?._id || req.user?.id;
+    if (!userId) throw createHttpError(401, 'Unauthorized');
+
+    const { id: articleId } = req.params;
 
     const user = await UserCollection.findById(userId);
     if (!user) throw createHttpError(404, 'User not found');
 
-    if (user.savedStories.some((id) => id.toString() === articleId)) {
+    if (user.savedStories.some((sid) => sid.toString() === articleId)) {
       return res
         .status(400)
         .json({ status: 400, message: 'Article already saved' });
@@ -119,27 +204,27 @@ export const addSavedArticle = async (req, res, next) => {
       $inc: { favoriteCount: 1 },
     });
 
-    res
-      .status(200)
-      .json({ status: 200, message: 'Article added to saved list' });
+    res.json({ status: 200, message: 'Article added to saved list' });
   } catch (error) {
     next(error);
   }
 };
 
-// DELETE /users/saved/:articleId
 export const removeSavedArticle = async (req, res, next) => {
   try {
-    const { articleId } = req.params;
-    const userId = req.user._id || req.user.id;
+    const userId = req.user?._id || req.user?.id;
+    if (!userId) throw createHttpError(401, 'Unauthorized');
+
+    const { id: articleId } = req.params;
 
     const user = await UserCollection.findById(userId);
     if (!user) throw createHttpError(404, 'User not found');
 
     const before = user.savedStories.length;
     user.savedStories = user.savedStories.filter(
-      (id) => id.toString() !== articleId,
+      (sid) => sid.toString() !== articleId,
     );
+
     if (user.savedStories.length === before) {
       return res
         .status(404)
@@ -151,67 +236,7 @@ export const removeSavedArticle = async (req, res, next) => {
       $inc: { favoriteCount: -1 },
     });
 
-    res
-      .status(200)
-      .json({ status: 200, message: 'Article removed from saved list' });
-  } catch (error) {
-    next(error);
-  }
-};
-
-// PATCH /users/avatar
-export const updateAvatar = async (req, res, next) => {
-  try {
-    const userId = req.user._id || req.user.id;
-
-    let avatarUrl = req.body.avatar;
-    if (req.file) {
-      const { saveFileToCloudinary } = await import(
-        '../utils/saveFileToCloudinary.js'
-      );
-      avatarUrl = await saveFileToCloudinary(req.file);
-    }
-    if (!avatarUrl)
-      return res
-        .status(400)
-        .json({ status: 400, message: 'Avatar is required' });
-
-    const user = await UserCollection.findByIdAndUpdate(
-      userId,
-      { avatar: avatarUrl },
-      { new: true, runValidators: true },
-    ).select('name email avatar');
-
-    res.status(200).json({
-      status: 200,
-      message: 'Avatar updated successfully',
-      data: user,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-// PATCH /users/update
-export const updateUser = async (req, res, next) => {
-  try {
-    const userId = req.user._id || req.user.id;
-    const patch = {};
-    if (typeof req.body.name === 'string') patch.name = req.body.name.trim();
-    if (typeof req.body.email === 'string') patch.email = req.body.email.trim();
-    if (typeof req.body.bio === 'string') patch.bio = req.body.bio.trim();
-    if (req.body.socialLinks) patch.socialLinks = req.body.socialLinks;
-
-    const user = await UserCollection.findByIdAndUpdate(userId, patch, {
-      new: true,
-      runValidators: true,
-    }).select('name email avatar bio socialLinks');
-
-    res.status(200).json({
-      status: 200,
-      message: 'User data updated successfully',
-      data: user,
-    });
+    res.json({ status: 200, message: 'Article removed from saved list' });
   } catch (error) {
     next(error);
   }

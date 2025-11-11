@@ -1,36 +1,18 @@
 type: object
 properties:
-  _id:
-    type: string
-    description: Унікальний ідентифікатор історії (Mongo ObjectId)
-  img:
-    type: string
-    format: uri
-    description: URL зображення історії
-  title:
-    type: string
-    description: Назва історії
-  description:
-    type: string
-    description: Опис історії
-  date:
-    type: string
-    format: date-time
-    description: Дата створення або оновлення
-  favoriteCount:
-    type: integer
-    description: Кількість вподобань
+  _id: { type: string }
+  img: { type: string, format: uri }
+  title: { type: string }
+  description: { type: string }
+  date: { type: string, format: date-time }
+  favoriteCount: { type: integer }
   category:
-    $ref: './Category.yaml'
+    $ref: ./Category.yaml
   owner:
     type: object
-    description: Інформація про автора історії
     properties:
-      _id:
-        type: string
-      name:
-        type: string
-      avatar:
-        type: string
-      bio:
-        type: string
+      _id: { type: string }
+      name: { type: string }
+      avatar: { type: string }
+      bio: { type: string }
+required: [_id, img, title, description, date, favoriteCount, category, owner]
