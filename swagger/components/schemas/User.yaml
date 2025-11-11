@@ -1,0 +1,35 @@
+type: object
+properties:
+  _id:
+    type: string
+    description: Унікальний ідентифікатор користувача (Mongo ObjectId)
+  name:
+    type: string
+  email:
+    type: string
+    format: email
+  avatar:
+    type: string
+    format: uri
+  bio:
+    type: string
+  onboardingCompleted:
+    type: boolean
+  settings:
+    type: object
+    properties:
+      darkMode:
+        type: boolean
+  socialLinks:
+    type: object
+    properties:
+      twitter:
+        type: string
+      facebook:
+        type: string
+      instagram:
+        type: string
+  savedStories:
+    type: array
+    items:
+      type: string

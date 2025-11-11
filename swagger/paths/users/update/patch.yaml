@@ -1,0 +1,62 @@
+tags:
+  - Users
+summary: Оновити дані користувача (name/email/bio/socialLinks)
+operationId: users_update
+security:
+  - cookieAuth: []
+  - bearerAuth: []
+
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        minProperties: 1
+        properties:
+          name:
+            type: string
+            minLength: 2
+            maxLength: 50
+          email:
+            type: string
+            format: email
+            maxLength: 64
+          bio:
+            type: string
+            maxLength: 500
+          socialLinks:
+            type: object
+            properties:
+              twitter:
+                type: string
+                format: uri
+              facebook:
+                type: string
+                format: uri
+              instagram:
+                type: string
+                format: uri
+
+responses:
+  '200':
+    description: Updated
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: User data updated successfully
+            data:
+              $ref: '../../../openapi.yaml#/components/schemas/User'
+
+  '401':
+    $ref: '../../../openapi.yaml#/components/responses/Unauthorized'
+
+  '400':
+    $ref: '../../../openapi.yaml#/components/responses/BadRequest'

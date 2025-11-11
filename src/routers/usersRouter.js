@@ -1,26 +1,48 @@
 import { Router } from 'express';
 import {
-    getUsers,
-    getUserById,
-    getCurrentUser,
-    addSavedStory,
-    removeSavedStory,
-    updateUser,
-    updateAvatar,
+  getUsers,
+  getUserById,
+  getCurrentUser,
+  addSavedArticle,
+  removeSavedArticle,
+  updateUser,
+  updateAvatar,
 } from '../controllers/usersController.js';
-import { authMiddleware } from '../middlewares/authMiddleware.js';
+
+import { authenticate } from '../middlewares/authenticate.js';
+import { upload } from '../middlewares/multer.js';
+import { isValidId } from '../middlewares/isValidId.js';
+import { validateBody } from '../middlewares/validateBody.js';
+import { validateQuery } from '../middlewares/validateQuery.js';
+
+import {
+  getUsersQuerySchema,
+  updateUserSchema,
+  updateAvatarBodySchema,
+} from '../validation/users.js';
 
 const router = Router();
 
-// Публічні
-router.get('/', getUsers);
-router.get('/current', authMiddleware, getCurrentUser); // 👈 вище!
-router.get('/:userId', getUserById);
+router.get('/', validateQuery(getUsersQuerySchema), getUsers);
+router.get('/current', authenticate, getCurrentUser);
+router.get('/:userId', isValidId, getUserById);
 
-// Приватні
-router.patch('/update', authMiddleware, updateUser);
-router.patch('/avatar', authMiddleware, updateAvatar);
-router.post('/saved/:storyId', authMiddleware, addSavedStory);
-router.delete('/saved/:storyId', authMiddleware, removeSavedStory);
+router.patch(
+  '/update',
+  authenticate,
+  validateBody(updateUserSchema),
+  updateUser,
+);
+
+router.patch(
+  '/avatar',
+  authenticate,
+  upload.single('avatar'),
+  validateBody(updateAvatarBodySchema),
+  updateAvatar,
+);
+
+router.post('/saved/:articleId', authenticate, isValidId, addSavedArticle);
+router.delete('/saved/:articleId', authenticate, isValidId, removeSavedArticle);
 
 export default router;

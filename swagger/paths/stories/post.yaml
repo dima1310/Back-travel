@@ -1,0 +1,52 @@
+tags:
+  - Stories
+summary: Створити історію
+operationId: stories_create
+security:
+  - cookieAuth: []
+  - bearerAuth: []
+
+requestBody:
+  required: true
+  content:
+    multipart/form-data:
+      schema:
+        type: object
+        required:
+          - storyImage
+          - title
+          - description
+          - category
+        properties:
+          storyImage:
+            type: string
+            format: binary
+          title:
+            type: string
+          description:
+            type: string
+          category:
+            type: string
+            description: Назва категорії (буде маплена на ObjectId)
+
+responses:
+  '201':
+    description: Created
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 201
+            message:
+              type: string
+            data:
+              $ref: '../../openapi.yaml#/components/schemas/Story'
+
+  '401':
+    $ref: '../../openapi.yaml#/components/responses/Unauthorized'
+
+  '400':
+    $ref: '../../openapi.yaml#/components/responses/BadRequest'

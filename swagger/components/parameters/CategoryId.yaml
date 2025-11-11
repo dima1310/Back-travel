@@ -1,0 +1,6 @@
+name: category
+in: query
+description: Фільтр за категорією (ObjectId)
+schema:
+  type: string
+  pattern: '^[a-f0-9]{24}$'

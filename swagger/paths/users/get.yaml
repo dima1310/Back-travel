@@ -1,0 +1,47 @@
+tags:
+  - Users
+summary: Отримати список авторів (публічно)
+operationId: users_getList
+description: Повертає список користувачів із пагінацією.
+security: [] # публічний ендпоінт, не потребує авторизації
+
+parameters:
+  - $ref: '../../openapi.yaml#/components/parameters/Page'
+  - $ref: '../../openapi.yaml#/components/parameters/PerPage'
+
+responses:
+  '200':
+    description: OK
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: Successfully found users!
+            data:
+              type: object
+              properties:
+                users:
+                  type: array
+                  items:
+                    $ref: '../../openapi.yaml#/components/schemas/User'
+                page:
+                  type: integer
+                  example: 1
+                perPage:
+                  type: integer
+                  example: 10
+                total:
+                  type: integer
+                  example: 123
+                totalPages:
+                  type: integer
+                  example: 13
+
+  '400':
+    $ref: '../../openapi.yaml#/components/responses/BadRequest'

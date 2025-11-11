@@ -7,7 +7,18 @@
   "scripts": {
     "lint": "eslint src/**/*.js",
     "start": "node ./src/index.js",
-    "dev": "nodemon src/index.js"
+    "dev": "nodemon src/index.js",
+    "docs": "node -e \"console.log('Docs 👉 http://localhost:'+(process.env.PORT||3000)+'/docs')\" && npm run dev",
+    "openapi:validate": "swagger-cli validate swagger/openapi.yaml",
+    "openapi:bundle": "swagger-cli bundle swagger/openapi.yaml -o swagger/bundle.yaml -t yaml",
+    "swagger:lint": "redocly lint ./swagger/openapi.yaml --config .redocly.yaml --format=codeframe",
+    "swagger:build": "mkdir -p docs && redocly bundle ./swagger/openapi.yaml -o ./docs/openapi.yaml",
+    "swagger:build:json": "mkdir -p docs && redocly bundle ./swagger/openapi.yaml -o ./docs/openapi.json",
+    "swagger:preview": "redocly preview ./docs/openapi.yaml",
+    "swagger:html": "mkdir -p docs && redocly build-docs ./docs/openapi.yaml -o ./docs/docs.html",
+    "swagger:all": "npm run swagger:lint && npm run swagger:build && npm run swagger:preview",
+    "docs:serve": "npm run swagger:build && node ./src/index.js",
+    "docs:dev": "nodemon --ext js,yaml,yml --watch swagger --watch src --exec \"npm run swagger:build && node ./src/index.js\""
   },
   "repository": {
     "type": "git",
@@ -21,7 +32,13 @@
   },
   "homepage": "https://github.com/dima1310/Back-travel#readme",
   "devDependencies": {
-    "nodemon": "^3.1.10"
+    "@apidevtools/swagger-cli": "^4.0.4",
+    "@redocly/cli": "^2.11.1",
+    "js-yaml": "^4.1.0",
+    "nodemon": "^3.1.10",
+    "swagger-cli": "^4.0.4",
+    "swagger-ui-express": "^5.0.1",
+    "yamljs": "^0.3.0"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
@@ -38,7 +55,6 @@
     "nodemailer": "^7.0.10",
     "pino": "^10.1.0",
     "pino-http": "^11.0.0",
-    "pino-pretty": "^13.1.2",
-    "swagger-ui-express": "^5.0.1"
+    "pino-pretty": "^13.1.2"
   }
 }

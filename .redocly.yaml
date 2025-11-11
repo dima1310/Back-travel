@@ -1,0 +1,12 @@
+apis:
+  podorozhnyky@v1:
+    root: ./swagger/openapi.yaml
+
+extends:
+  - recommended
+
+rules:
+  no-empty-servers: off
+  no-server-example.com: off
+  info-license: warn
+  tag-description: warn
