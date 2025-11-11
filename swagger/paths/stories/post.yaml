@@ -27,7 +27,7 @@ requestBody:
             type: string
           category:
             type: string
-            description: Назва категорії (буде маплена на ObjectId)
+            description: Назва категорії (буде замаплена на ObjectId)
 
 responses:
   '201':
@@ -42,6 +42,7 @@ responses:
               example: 201
             message:
               type: string
+              example: Successfully created a story
             data:
               $ref: '../../openapi.yaml#/components/schemas/Story'
 

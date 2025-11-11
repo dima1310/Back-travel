@@ -3,7 +3,7 @@ tags:
 summary: Отримати список авторів (публічно)
 operationId: users_getList
 description: Повертає список користувачів із пагінацією.
-security: [] # публічний ендпоінт, не потребує авторизації
+security: []
 
 parameters:
   - $ref: '../../openapi.yaml#/components/parameters/Page'

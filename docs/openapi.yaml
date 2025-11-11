@@ -233,7 +233,12 @@ paths:
         - $ref: '#/components/parameters/PerPage'
         - $ref: '#/components/parameters/SortBy'
         - $ref: '#/components/parameters/SortOrder'
-        - $ref: '#/components/parameters/CategoryId'
+        - in: query
+          name: category
+          schema:
+            type: string
+          description: |
+            Фільтр за категорією. Може бути або Mongo ObjectId (24 hex), або назва існуючої категорії (наприклад, "Європа").
       responses:
         '200':
           description: OK
@@ -247,25 +252,32 @@ paths:
                     example: 200
                   message:
                     type: string
+                    example: Successfully found stories.
                   data:
                     type: object
                     properties:
-                      total:
-                        type: integer
-                      page:
-                        type: integer
-                      limit:
-                        type: integer
-                      totalPages:
-                        type: integer
-                      hasNextPage:
-                        type: boolean
-                      hasPrevPage:
-                        type: boolean
-                      stories:
+                      data:
                         type: array
                         items:
                           $ref: '#/components/schemas/Story'
+                      page:
+                        type: integer
+                        example: 1
+                      perPage:
+                        type: integer
+                        example: 9
+                      total:
+                        type: integer
+                        example: 123
+                      totalPages:
+                        type: integer
+                        example: 14
+                      hasNextPage:
+                        type: boolean
+                        example: true
+                      hasPrevPage:
+                        type: boolean
+                        example: false
         '400':
           $ref: '#/components/responses/BadRequest'
     post:
@@ -297,7 +309,7 @@ paths:
                   type: string
                 category:
                   type: string
-                  description: Назва категорії (буде маплена на ObjectId)
+                  description: Назва категорії (буде замаплена на ObjectId)
       responses:
         '201':
           description: Created
@@ -311,6 +323,7 @@ paths:
                     example: 201
                   message:
                     type: string
+                    example: Successfully created a story
                   data:
                     $ref: '#/components/schemas/Story'
         '400':
@@ -358,6 +371,7 @@ paths:
           description: Ідентифікатор історії
           schema:
             type: string
+            pattern: ^[a-f0-9]{24}$
       responses:
         '200':
           description: OK
@@ -368,8 +382,10 @@ paths:
                 properties:
                   status:
                     type: integer
+                    example: 200
                   message:
                     type: string
+                    example: Successfully found story with id {storyId}
                   data:
                     $ref: '#/components/schemas/Story'
         '400':
@@ -540,6 +556,7 @@ paths:
           description: Ідентифікатор користувача
           schema:
             type: string
+            pattern: ^[a-f0-9]{24}$
       responses:
         '200':
           description: OK
@@ -553,7 +570,7 @@ paths:
                     example: 200
                   message:
                     type: string
-                    example: Successfully found user and articles!
+                    example: Successfully found user and stories!
                   data:
                     type: object
                     properties:
@@ -819,29 +836,22 @@ components:
       properties:
         _id:
           type: string
-          description: Унікальний ідентифікатор історії (Mongo ObjectId)
         img:
           type: string
           format: uri
-          description: URL зображення історії
         title:
           type: string
-          description: Назва історії
         description:
           type: string
-          description: Опис історії
         date:
           type: string
           format: date-time
-          description: Дата створення або оновлення
         favoriteCount:
           type: integer
-          description: Кількість вподобань
         category:
           $ref: '#/components/schemas/Category'
         owner:
           type: object
-          description: Інформація про автора історії
           properties:
             _id:
               type: string
@@ -851,6 +861,15 @@ components:
               type: string
             bio:
               type: string
+      required:
+        - _id
+        - img
+        - title
+        - description
+        - date
+        - favoriteCount
+        - category
+        - owner
     Category:
       type: object
       properties:
@@ -873,6 +892,36 @@ components:
           type: object
           nullable: true
           description: Додаткові дані або null
+    UserPublic:
+      type: object
+      properties:
+        _id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+          nullable: true
+        avatar:
+          type: string
+        bio:
+          type: string
+        socialLinks:
+          type: object
+          properties:
+            twitter:
+              type: string
+              format: uri
+            facebook:
+              type: string
+              format: uri
+            instagram:
+              type: string
+              format: uri
+      required:
+        - _id
+        - name
   responses:
     Unauthorized:
       description: Unauthorized

@@ -11,6 +11,7 @@ parameters:
     description: Ідентифікатор історії
     schema:
       type: string
+      pattern: '^[a-f0-9]{24}$'
 
 responses:
   '200':
@@ -22,8 +23,10 @@ responses:
           properties:
             status:
               type: integer
+              example: 200
             message:
               type: string
+              example: Successfully found story with id {storyId}
             data:
               $ref: '../../../../openapi.yaml#/components/schemas/Story'
 
