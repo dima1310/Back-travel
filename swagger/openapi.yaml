@@ -1,0 +1,148 @@
+openapi: 3.0.3
+
+info:
+  title: Podorozhnyky API
+  version: 1.0.0
+  license:
+    name: MIT
+    url: https://opensource.org/license/mit/
+
+servers:
+  - url: http://localhost:3000
+
+tags:
+  - name: Auth
+    description: Аутентификация и управление сессией
+  - name: Stories
+    description: Операции с историями
+  - name: Users
+    description: Пользователи и профили
+
+security:
+  - cookieAuth: []
+  - bearerAuth: []
+
+paths:
+  /auth/login:
+    post:
+      $ref: ./paths/auth/login.yaml
+
+  /auth/register:
+    post:
+      $ref: ./paths/auth/register.yaml
+
+  /auth/refresh:
+    post:
+      $ref: ./paths/auth/refresh.yaml
+
+  /auth/logout:
+    post:
+      $ref: ./paths/auth/logout.yaml
+
+  /stories:
+    get:
+      $ref: ./paths/stories/get.yaml
+    post:
+      $ref: ./paths/stories/post.yaml
+
+  /stories/categories:
+    get:
+      $ref: ./paths/stories/categories/get.yaml
+
+  /stories/{storyId}:
+    parameters:
+      - $ref: '#/components/parameters/StoryId'
+    get:
+      $ref: ./paths/stories/story/{storyId}/get.yaml
+    patch:
+      $ref: ./paths/stories/story/{storyId}/patch.yaml
+    delete:
+      $ref: ./paths/stories/story/{storyId}/delete.yaml
+
+  /users:
+    get:
+      $ref: ./paths/users/get.yaml
+
+  /users/current:
+    get:
+      $ref: ./paths/users/current/get.yaml
+
+  /users/{userId}:
+    parameters:
+      - $ref: '#/components/parameters/UserId'
+    get:
+      $ref: ./paths/users/{userId}/get.yaml
+
+  /users/update:
+    patch:
+      $ref: ./paths/users/update/patch.yaml
+
+  /users/avatar:
+    patch:
+      $ref: ./paths/users/avatar/patch.yaml
+
+  /users/saved-story/{id}:
+    parameters:
+      - $ref: '#/components/parameters/SavedId'
+    post:
+      $ref: ./paths/users/saved-story/{id}/post.yaml
+    delete:
+      $ref: ./paths/users/saved-story/{id}/delete.yaml
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: accessToken
+
+  schemas:
+    Auth:
+      $ref: ./components/schemas/Auth.yaml
+    User:
+      $ref: ./components/schemas/User.yaml
+    Story:
+      $ref: ./components/schemas/Story.yaml
+    Category:
+      $ref: ./components/schemas/Category.yaml
+    Error:
+      $ref: ./components/schemas/Error.yaml
+
+  responses:
+    Unauthorized:
+      $ref: ./components/responses/Unauthorized.yaml
+    BadRequest:
+      $ref: ./components/responses/BadRequest.yaml
+    NotFound:
+      $ref: ./components/responses/NotFound.yaml
+    NoContent:
+      $ref: ./components/responses/NoContent.yaml
+    Forbidden:
+      $ref: ./components/responses/Forbidden.yaml
+
+  parameters:
+    Page:
+      $ref: ./components/parameters/Page.yaml
+    PerPage:
+      $ref: ./components/parameters/PerPage.yaml
+    SortBy:
+      $ref: ./components/parameters/SortBy.yaml
+    SortOrder:
+      $ref: ./components/parameters/SortOrder.yaml
+    CategoryId:
+      $ref: ./components/parameters/CategoryId.yaml
+    StoryId:
+      $ref: ./components/parameters/StoryId.yaml
+    UserId:
+      $ref: ./components/parameters/UserId.yaml
+    SavedId:
+      name: id
+      in: path
+      required: true
+      description: Ідентифікатор збереженої історії
+      schema:
+        type: string

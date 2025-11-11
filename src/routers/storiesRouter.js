@@ -1,17 +1,43 @@
 import { Router } from 'express';
 import { authenticate } from '../middlewares/authenticate.js';
 import { validateBody } from '../middlewares/validateBody.js';
-import { createStorySchema } from '../validation/story.js';
-import { createStoryController, deleteStoryController, getStoriesController, getStoryByIdController, patchStoryController } from '../controllers/storiesController.js';
+import {
+  createStoryController,
+  deleteStoryController,
+  getCategoriesController,
+  getStoriesController,
+  getStoryByIdController,
+  patchStoryController,
+} from '../controllers/storiesController.js';
 import { isValidId } from '../middlewares/isValidId.js';
-import { upload } from '../middlewares/upload.js';
+import { upload } from '../middlewares/multer.js';
+import { createStorySchema, updateStorySchema } from '../validation/story.js';
 
 const router = Router();
 
+// public
 router.get('/', getStoriesController);
+router.get('/categories', getCategoriesController);
 router.get('/:storyId', isValidId, getStoryByIdController);
-router.post('/', authenticate, upload.single('storyImage'), validateBody(createStorySchema), createStoryController);
-router.patch('/:storyId', authenticate, upload.single('storyImage'), isValidId, validateBody(createStorySchema), patchStoryController);
-router.delete('/:storyId', isValidId, deleteStoryController);
+
+// private
+router.post(
+  '/',
+  authenticate,
+  upload.single('storyImage'),
+  validateBody(createStorySchema),
+  createStoryController,
+);
+
+router.patch(
+  '/:storyId',
+  authenticate,
+  isValidId,
+  upload.single('storyImage'),
+  validateBody(updateStorySchema),
+  patchStoryController,
+);
+
+router.delete('/:storyId', authenticate, isValidId, deleteStoryController);
 
 export default router;

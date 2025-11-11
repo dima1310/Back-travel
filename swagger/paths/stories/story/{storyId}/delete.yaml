@@ -1,0 +1,17 @@
+tags:
+  - Stories
+summary: Видалити історію (лише власник)
+operationId: stories_deleteById
+security:
+  - cookieAuth: []
+  - bearerAuth: []
+
+responses:
+  '204':
+    $ref: '../../../../openapi.yaml#/components/responses/NoContent'
+  '401':
+    $ref: '../../../../openapi.yaml#/components/responses/Unauthorized'
+  '403':
+    $ref: '../../../../openapi.yaml#/components/responses/Forbidden'
+  '404':
+    $ref: '../../../../openapi.yaml#/components/responses/NotFound'

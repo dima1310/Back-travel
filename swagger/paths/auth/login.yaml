@@ -1,0 +1,41 @@
+tags:
+  - Auth
+summary: Логін
+operationId: auth_login
+security: []
+
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        required:
+          - email
+          - password
+        properties:
+          email:
+            type: string
+            format: email
+          password:
+            type: string
+            minLength: 8
+
+responses:
+  '200':
+    description: 'OK (Set-Cookie: accessToken, refreshToken, sessionId)'
+    headers:
+      Set-Cookie:
+        description: |
+          Multiple `Set-Cookie` headers are returned: `accessToken`, `refreshToken`, `sessionId`.
+          Each cookie is HttpOnly; `secure` is true in production.
+        schema:
+          type: string
+    content:
+      application/json:
+        schema:
+          $ref: ../../components/schemas/Auth.yaml
+  '401':
+    $ref: ../../components/responses/Unauthorized.yaml
+  '400':
+    $ref: ../../components/responses/BadRequest.yaml

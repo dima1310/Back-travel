@@ -1,0 +1,65 @@
+tags:
+  - Stories
+summary: Редагувати історію (лише власник)
+operationId: stories_updateById
+description: Оновлення полів історії за її ідентифікатором.
+
+parameters:
+  - name: storyId
+    in: path
+    required: true
+    description: Ідентифікатор історії
+    schema:
+      type: string
+
+security:
+  - cookieAuth: []
+  - bearerAuth: []
+
+requestBody:
+  required: true
+  content:
+    multipart/form-data:
+      schema:
+        type: object
+        properties:
+          storyImage:
+            type: string
+            format: binary
+            description: Нова картинка (необов'язково)
+          title:
+            type: string
+          description:
+            type: string
+          category:
+            type: string
+            description: Назва існуючої категорії (буде замаплено на ObjectId)
+
+responses:
+  '200':
+    description: Updated
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: Successfully updated story!
+            data:
+              $ref: '../../../../openapi.yaml#/components/schemas/Story'
+
+  '400':
+    $ref: '../../../../openapi.yaml#/components/responses/BadRequest'
+
+  '401':
+    $ref: '../../../../openapi.yaml#/components/responses/Unauthorized'
+
+  '403':
+    $ref: '../../../../openapi.yaml#/components/responses/Forbidden'
+
+  '404':
+    $ref: '../../../../openapi.yaml#/components/responses/NotFound'

@@ -1,0 +1,8 @@
+type: object
+properties:
+  _id:
+    type: string
+    description: Унікальний ідентифікатор категорії (Mongo ObjectId)
+  name:
+    type: string
+    description: Назва категорії

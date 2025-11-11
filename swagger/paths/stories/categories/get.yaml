@@ -1,0 +1,25 @@
+tags:
+  - Stories
+summary: Отримати список категорій
+operationId: stories_getCategories
+description: Отримання всіх доступних категорій історій.
+
+responses:
+  '200':
+    description: OK
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            status:
+              type: integer
+            message:
+              type: string
+            data:
+              type: array
+              items:
+                $ref: '../../../openapi.yaml#/components/schemas/Category'
+
+  '400':
+    $ref: '../../../openapi.yaml#/components/responses/BadRequest'

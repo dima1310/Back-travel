@@ -1,0 +1,48 @@
+tags:
+  - Auth
+summary: Оновлення сесії (refresh)
+operationId: auth_refresh
+description: >
+  Приймає HttpOnly cookies `refreshToken` та `sessionId` і випускає новий `accessToken`.
+  У відповіді сервер оновлює три cookies: `accessToken`, `refreshToken`, `sessionId` з новими строками життя.
+security: [] # публичный endpoint, перекрывает глобальную защиту
+parameters:
+  - name: refreshToken
+    in: cookie
+    required: true
+    description: HttpOnly refresh-токен зі сесії користувача
+    schema:
+      type: string
+    example: rfr.R7mI...xP2
+  - name: sessionId
+    in: cookie
+    required: true
+    description: Ідентифікатор сесії в БД
+    schema:
+      type: string
+    example: 670f1b9c0fe4f5e4d3f2a111
+
+responses:
+  '200':
+    description: Successfully refreshed a session
+    headers:
+      Set-Cookie:
+        description: >
+          Сервер встановлює три HttpOnly cookies: accessToken, refreshToken, sessionId
+          (SameSite: none у prod, lax у dev; secure у prod).
+        schema:
+          type: string
+    content:
+      application/json:
+        schema:
+          $ref: ../../components/schemas/Auth.yaml
+
+  '401':
+    $ref: ../../components/responses/Unauthorized.yaml
+
+  '500':
+    description: Server error
+    content:
+      application/json:
+        schema:
+          $ref: ../../components/schemas/Error.yaml

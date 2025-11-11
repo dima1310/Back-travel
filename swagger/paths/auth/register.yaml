@@ -1,0 +1,89 @@
+tags:
+  - Auth
+summary: Реєстрація користувача
+operationId: auth_register
+security: [] # публичный эндпоинт, переопределяет глобальную security
+description: >
+  Створює нового користувача. Повертає об’єкт user (name, email).
+  Пароль ніколи не повертається (видаляється в toJSON).
+
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        required:
+          - name
+          - email
+          - password
+        properties:
+          name:
+            type: string
+            minLength: 2
+            maxLength: 20
+            example: Alice
+          email:
+            type: string
+            format: email
+            maxLength: 64
+            example: alice@test.com
+          password:
+            type: string
+            minLength: 8
+            maxLength: 33
+            example: Qwerty123!
+
+responses:
+  '201':
+    description: Successfully registered a user
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 201
+            message:
+              type: string
+              example: Successfully registered a user!
+            data:
+              type: object
+              properties:
+                user:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                      example: Alice
+                    email:
+                      type: string
+                      example: alice@test.com
+
+  '400':
+    $ref: ../../components/responses/BadRequest.yaml
+
+  '409':
+    description: Email already in use
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 409
+            message:
+              type: string
+              example: Email already in use
+            data:
+              type: string
+              example: Email already in use
+
+  '500':
+    description: Server error
+    content:
+      application/json:
+        schema:
+          $ref: ../../components/schemas/Error.yaml

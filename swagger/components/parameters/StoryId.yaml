@@ -1,0 +1,7 @@
+name: storyId
+in: path
+required: true
+description: Mongo ObjectId історії
+schema:
+  type: string
+  pattern: '^[a-f0-9]{24}$'

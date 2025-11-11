@@ -1,0 +1,36 @@
+tags:
+  - Users
+summary: Видалити історію із збережених
+operationId: users_removeSavedStory
+security:
+  - cookieAuth: []
+  - bearerAuth: []
+
+parameters:
+  - name: id
+    in: path
+    required: true
+    description: Ідентифікатор збереженої історії
+    schema:
+      type: string
+
+responses:
+  '200':
+    description: OK
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: Article removed from saved list
+
+  '401':
+    $ref: '../../../../openapi.yaml#/components/responses/Unauthorized'
+
+  '404':
+    $ref: '../../../../openapi.yaml#/components/responses/NotFound'

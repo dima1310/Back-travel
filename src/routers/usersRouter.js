@@ -23,12 +23,10 @@ import {
 
 const router = Router();
 
-// публичные
 router.get('/', validateQuery(getUsersQuerySchema), getUsers);
 router.get('/current', authenticate, getCurrentUser);
 router.get('/:userId', isValidId, getUserById);
 
-// приватные
 router.patch(
   '/update',
   authenticate,
@@ -44,7 +42,6 @@ router.patch(
   updateAvatar,
 );
 
-// saved/unsaved
 router.post('/saved/:articleId', authenticate, isValidId, addSavedArticle);
 router.delete('/saved/:articleId', authenticate, isValidId, removeSavedArticle);
 

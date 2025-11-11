@@ -1,0 +1,35 @@
+tags:
+  - Auth
+summary: Вихід із системи (logout)
+operationId: auth_logout
+security: []
+description: >
+  Очищує cookie (accessToken, refreshToken, sessionId) і, якщо sessionId існує,
+  завершує сесію в БД. Завжди повертає 204 No Content. Авторизація не обов’язкова.
+
+responses:
+  '204':
+    description: No Content — cookies cleared
+    headers:
+      Set-Cookie:
+        description: >
+          Сервер відправляє кілька заголовків Set-Cookie, щоб "затирати"
+          accessToken, refreshToken та sessionId (HttpOnly, SameSite, Secure) із минулою датою.
+        schema:
+          type: string
+        examples:
+          cleared:
+            value: |
+              accessToken=; Path=/; HttpOnly; SameSite=None; Secure; Expires=Thu, 01 Jan 1970 00:00:00 GMT
+              refreshToken=; Path=/; HttpOnly; SameSite=None; Secure; Expires=Thu, 01 Jan 1970 00:00:00 GMT
+              sessionId=; Path=/; HttpOnly; SameSite=None; Secure; Expires=Thu, 01 Jan 1970 00:00:00 GMT
+
+  '400':
+    $ref: '../../openapi.yaml#/components/responses/BadRequest'
+
+  '500':
+    description: Server error
+    content:
+      application/json:
+        schema:
+          $ref: '../../components/schemas/Error.yaml'

@@ -8,7 +8,7 @@ const userSchema = new Schema(
     avatar: { type: String, default: '' },
     bio: { type: String, default: '' },
     onboardingCompleted: { type: Boolean, default: false },
-    savedStories: [{ type: Schema.Types.ObjectId, ref: 'stories' }],
+    savedStories: [{ type: Schema.Types.ObjectId, ref: 'story' }],
     settings: {
       darkMode: { type: Boolean, default: false },
     },

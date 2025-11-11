@@ -1,0 +1,970 @@
+openapi: 3.0.3
+info:
+  title: Podorozhnyky API
+  version: 1.0.0
+  license:
+    name: MIT
+    url: https://opensource.org/license/mit/
+servers:
+  - url: http://localhost:3000
+security:
+  - cookieAuth: []
+  - bearerAuth: []
+tags:
+  - name: Auth
+    description: Аутентификация и управление сессией
+  - name: Stories
+    description: Операции с историями
+  - name: Users
+    description: Пользователи и профили
+paths:
+  /auth/login:
+    post:
+      tags:
+        - Auth
+      summary: Логін
+      operationId: auth_login
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  minLength: 8
+      responses:
+        '200':
+          description: 'OK (Set-Cookie: accessToken, refreshToken, sessionId)'
+          headers:
+            Set-Cookie:
+              description: |
+                Multiple `Set-Cookie` headers are returned: `accessToken`, `refreshToken`, `sessionId`.
+                Each cookie is HttpOnly; `secure` is true in production.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Auth'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /auth/register:
+    post:
+      tags:
+        - Auth
+      summary: Реєстрація користувача
+      operationId: auth_register
+      security: []
+      description: |
+        Створює нового користувача. Повертає об’єкт user (name, email). Пароль ніколи не повертається (видаляється в toJSON).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - email
+                - password
+              properties:
+                name:
+                  type: string
+                  minLength: 2
+                  maxLength: 20
+                  example: Alice
+                email:
+                  type: string
+                  format: email
+                  maxLength: 64
+                  example: alice@test.com
+                password:
+                  type: string
+                  minLength: 8
+                  maxLength: 33
+                  example: Qwerty123!
+      responses:
+        '201':
+          description: Successfully registered a user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 201
+                  message:
+                    type: string
+                    example: Successfully registered a user!
+                  data:
+                    type: object
+                    properties:
+                      user:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            example: Alice
+                          email:
+                            type: string
+                            example: alice@test.com
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          description: Email already in use
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 409
+                  message:
+                    type: string
+                    example: Email already in use
+                  data:
+                    type: string
+                    example: Email already in use
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /auth/refresh:
+    post:
+      tags:
+        - Auth
+      summary: Оновлення сесії (refresh)
+      operationId: auth_refresh
+      description: |
+        Приймає HttpOnly cookies `refreshToken` та `sessionId` і випускає новий `accessToken`. У відповіді сервер оновлює три cookies: `accessToken`, `refreshToken`, `sessionId` з новими строками життя.
+      security: []
+      parameters:
+        - name: refreshToken
+          in: cookie
+          required: true
+          description: HttpOnly refresh-токен зі сесії користувача
+          schema:
+            type: string
+          example: rfr.R7mI...xP2
+        - name: sessionId
+          in: cookie
+          required: true
+          description: Ідентифікатор сесії в БД
+          schema:
+            type: string
+          example: 670f1b9c0fe4f5e4d3f2a111
+      responses:
+        '200':
+          description: Successfully refreshed a session
+          headers:
+            Set-Cookie:
+              description: |
+                Сервер встановлює три HttpOnly cookies: accessToken, refreshToken, sessionId (SameSite: none у prod, lax у dev; secure у prod).
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Auth'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /auth/logout:
+    post:
+      tags:
+        - Auth
+      summary: Вихід із системи (logout)
+      operationId: auth_logout
+      security: []
+      description: |
+        Очищує cookie (accessToken, refreshToken, sessionId) і, якщо sessionId існує, завершує сесію в БД. Завжди повертає 204 No Content. Авторизація не обов’язкова.
+      responses:
+        '204':
+          description: No Content — cookies cleared
+          headers:
+            Set-Cookie:
+              description: |
+                Сервер відправляє кілька заголовків Set-Cookie, щоб "затирати" accessToken, refreshToken та sessionId (HttpOnly, SameSite, Secure) із минулою датою.
+              schema:
+                type: string
+              examples:
+                cleared:
+                  value: |
+                    accessToken=; Path=/; HttpOnly; SameSite=None; Secure; Expires=Thu, 01 Jan 1970 00:00:00 GMT
+                    refreshToken=; Path=/; HttpOnly; SameSite=None; Secure; Expires=Thu, 01 Jan 1970 00:00:00 GMT
+                    sessionId=; Path=/; HttpOnly; SameSite=None; Secure; Expires=Thu, 01 Jan 1970 00:00:00 GMT
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /stories:
+    get:
+      tags:
+        - Stories
+      summary: Отримати список історій
+      operationId: stories_list
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PerPage'
+        - $ref: '#/components/parameters/SortBy'
+        - $ref: '#/components/parameters/SortOrder'
+        - $ref: '#/components/parameters/CategoryId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      total:
+                        type: integer
+                      page:
+                        type: integer
+                      limit:
+                        type: integer
+                      totalPages:
+                        type: integer
+                      hasNextPage:
+                        type: boolean
+                      hasPrevPage:
+                        type: boolean
+                      stories:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Story'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+    post:
+      tags:
+        - Stories
+      summary: Створити історію
+      operationId: stories_create
+      security:
+        - cookieAuth: []
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - storyImage
+                - title
+                - description
+                - category
+              properties:
+                storyImage:
+                  type: string
+                  format: binary
+                title:
+                  type: string
+                description:
+                  type: string
+                category:
+                  type: string
+                  description: Назва категорії (буде маплена на ObjectId)
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 201
+                  message:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/Story'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /stories/categories:
+    get:
+      tags:
+        - Stories
+      summary: Отримати список категорій
+      operationId: stories_getCategories
+      description: Отримання всіх доступних категорій історій.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Category'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+  /stories/{storyId}:
+    parameters:
+      - $ref: '#/components/parameters/StoryId'
+    get:
+      tags:
+        - Stories
+      summary: Отримати історію за ID
+      operationId: stories_getById
+      description: Повертає деталі історії за її унікальним ідентифікатором.
+      parameters:
+        - name: storyId
+          in: path
+          required: true
+          description: Ідентифікатор історії
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                  message:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/Story'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      tags:
+        - Stories
+      summary: Редагувати історію (лише власник)
+      operationId: stories_updateById
+      description: Оновлення полів історії за її ідентифікатором.
+      parameters:
+        - name: storyId
+          in: path
+          required: true
+          description: Ідентифікатор історії
+          schema:
+            type: string
+      security:
+        - cookieAuth: []
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                storyImage:
+                  type: string
+                  format: binary
+                  description: Нова картинка (необов'язково)
+                title:
+                  type: string
+                description:
+                  type: string
+                category:
+                  type: string
+                  description: Назва існуючої категорії (буде замаплено на ObjectId)
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Successfully updated story!
+                  data:
+                    $ref: '#/components/schemas/Story'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      tags:
+        - Stories
+      summary: Видалити історію (лише власник)
+      operationId: stories_deleteById
+      security:
+        - cookieAuth: []
+        - bearerAuth: []
+      responses:
+        '204':
+          $ref: '#/components/responses/NoContent'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /users:
+    get:
+      tags:
+        - Users
+      summary: Отримати список авторів (публічно)
+      operationId: users_getList
+      description: Повертає список користувачів із пагінацією.
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PerPage'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Successfully found users!
+                  data:
+                    type: object
+                    properties:
+                      users:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/User'
+                      page:
+                        type: integer
+                        example: 1
+                      perPage:
+                        type: integer
+                        example: 10
+                      total:
+                        type: integer
+                        example: 123
+                      totalPages:
+                        type: integer
+                        example: 13
+        '400':
+          $ref: '#/components/responses/BadRequest'
+  /users/current:
+    get:
+      tags:
+        - Users
+      summary: Поточний користувач (приватно)
+      operationId: users_getCurrent
+      security:
+        - cookieAuth: []
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Successfully found current user!
+                  data:
+                    $ref: '#/components/schemas/User'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /users/{userId}:
+    parameters:
+      - $ref: '#/components/parameters/UserId'
+    get:
+      tags:
+        - Users
+      summary: Отримати публічний профіль користувача та його історії
+      operationId: users_getById
+      description: Повертає публічну інформацію про користувача та список його історій.
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: Ідентифікатор користувача
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Successfully found user and articles!
+                  data:
+                    type: object
+                    properties:
+                      user:
+                        $ref: '#/components/schemas/User'
+                      articles:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Story'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /users/update:
+    patch:
+      tags:
+        - Users
+      summary: Оновити дані користувача (name/email/bio/socialLinks)
+      operationId: users_update
+      security:
+        - cookieAuth: []
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              minProperties: 1
+              properties:
+                name:
+                  type: string
+                  minLength: 2
+                  maxLength: 50
+                email:
+                  type: string
+                  format: email
+                  maxLength: 64
+                bio:
+                  type: string
+                  maxLength: 500
+                socialLinks:
+                  type: object
+                  properties:
+                    twitter:
+                      type: string
+                      format: uri
+                    facebook:
+                      type: string
+                      format: uri
+                    instagram:
+                      type: string
+                      format: uri
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: User data updated successfully
+                  data:
+                    $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /users/avatar:
+    patch:
+      tags:
+        - Users
+      summary: Оновити аватар (file або url)
+      operationId: updateUserAvatar
+      security:
+        - cookieAuth: []
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                avatar:
+                  type: string
+                  format: binary
+          application/json:
+            schema:
+              type: object
+              properties:
+                avatar:
+                  type: string
+                  format: uri
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Avatar updated successfully
+                  data:
+                    $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /users/saved-story/{id}:
+    parameters:
+      - $ref: '#/components/parameters/SavedId'
+    post:
+      tags:
+        - Users
+      summary: Додати історію до збережених
+      operationId: users_addSavedStory
+      security:
+        - cookieAuth: []
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Ідентифікатор історії для збереження
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Article added to saved list
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      tags:
+        - Users
+      summary: Видалити історію із збережених
+      operationId: users_removeSavedStory
+      security:
+        - cookieAuth: []
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Ідентифікатор збереженої історії
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Article removed from saved list
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: accessToken
+  schemas:
+    Auth:
+      type: object
+      properties:
+        status:
+          type: integer
+          example: 200
+        message:
+          type: string
+          example: Successfully logged in a user!
+        data:
+          type: object
+          properties:
+            accessToken:
+              type: string
+              description: JWT токен доступу (короткоживучий)
+            refreshToken:
+              type: string
+              description: JWT токен оновлення (довгоживучий)
+            sessionId:
+              type: string
+              description: Ідентифікатор сесії у БД
+            user:
+              $ref: '#/components/schemas/User'
+    User:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: Унікальний ідентифікатор користувача (Mongo ObjectId)
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        avatar:
+          type: string
+          format: uri
+        bio:
+          type: string
+        onboardingCompleted:
+          type: boolean
+        settings:
+          type: object
+          properties:
+            darkMode:
+              type: boolean
+        socialLinks:
+          type: object
+          properties:
+            twitter:
+              type: string
+            facebook:
+              type: string
+            instagram:
+              type: string
+        savedStories:
+          type: array
+          items:
+            type: string
+    Story:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: Унікальний ідентифікатор історії (Mongo ObjectId)
+        img:
+          type: string
+          format: uri
+          description: URL зображення історії
+        title:
+          type: string
+          description: Назва історії
+        description:
+          type: string
+          description: Опис історії
+        date:
+          type: string
+          format: date-time
+          description: Дата створення або оновлення
+        favoriteCount:
+          type: integer
+          description: Кількість вподобань
+        category:
+          $ref: '#/components/schemas/Category'
+        owner:
+          type: object
+          description: Інформація про автора історії
+          properties:
+            _id:
+              type: string
+            name:
+              type: string
+            avatar:
+              type: string
+            bio:
+              type: string
+    Category:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: Унікальний ідентифікатор категорії (Mongo ObjectId)
+        name:
+          type: string
+          description: Назва категорії
+    Error:
+      type: object
+      properties:
+        status:
+          type: integer
+          example: 400
+        message:
+          type: string
+          example: Validation error
+        data:
+          type: object
+          nullable: true
+          description: Додаткові дані або null
+  responses:
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    BadRequest:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NoContent:
+      description: No Content
+    Forbidden:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  parameters:
+    Page:
+      name: page
+      in: query
+      description: Номер сторінки
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+    PerPage:
+      name: perPage
+      in: query
+      description: Розмір сторінки
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 50
+        default: 9
+    SortBy:
+      name: sortBy
+      in: query
+      description: Поле сортування
+      schema:
+        type: string
+        enum:
+          - favoriteCount
+          - date
+        default: date
+    SortOrder:
+      name: sortOrder
+      in: query
+      description: Порядок сортування
+      schema:
+        type: string
+        enum:
+          - asc
+          - desc
+        default: desc
+    CategoryId:
+      name: category
+      in: query
+      description: Фільтр за категорією (ObjectId)
+      schema:
+        type: string
+        pattern: ^[a-f0-9]{24}$
+    StoryId:
+      name: storyId
+      in: path
+      required: true
+      description: Mongo ObjectId історії
+      schema:
+        type: string
+        pattern: ^[a-f0-9]{24}$
+    UserId:
+      name: userId
+      in: path
+      required: true
+      description: Mongo ObjectId користувача
+      schema:
+        type: string
+        pattern: ^[a-f0-9]{24}$
+    SavedId:
+      name: id
+      in: path
+      required: true
+      description: Ідентифікатор збереженої історії
+      schema:
+        type: string

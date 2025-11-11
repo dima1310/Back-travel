@@ -1,0 +1,48 @@
+tags:
+  - Users
+summary: Оновити аватар (file або url)
+operationId: updateUserAvatar
+security:
+  - cookieAuth: []
+  - bearerAuth: []
+
+requestBody:
+  required: true
+  content:
+    multipart/form-data:
+      schema:
+        type: object
+        properties:
+          avatar:
+            type: string
+            format: binary
+    application/json:
+      schema:
+        type: object
+        properties:
+          avatar:
+            type: string
+            format: uri
+
+responses:
+  '200':
+    description: Updated
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: Avatar updated successfully
+            data:
+              $ref: '../../../openapi.yaml#/components/schemas/User'
+
+  '401':
+    $ref: '../../../openapi.yaml#/components/responses/Unauthorized'
+
+  '400':
+    $ref: '../../../openapi.yaml#/components/responses/BadRequest'
