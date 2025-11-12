@@ -3,6 +3,7 @@ tags:
 summary: Отримати публічний профіль користувача та його історії
 operationId: users_getById
 description: Повертає публічну інформацію про користувача та список його історій.
+security: []
 
 parameters:
   - name: userId

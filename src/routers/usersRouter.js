@@ -31,12 +31,7 @@ router.get('/:userId', isValidId, getUserById);
 // private
 router.get('/current', authenticate, getCurrentUser);
 
-router.patch(
-  '/update',
-  authenticate,
-  validateBody(updateUserSchema),
-  updateUser,
-);
+router.patch('/', authenticate, validateBody(updateUserSchema), updateUser);
 
 router.patch(
   '/avatar',

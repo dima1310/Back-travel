@@ -3,6 +3,7 @@ tags:
 summary: Отримати історію за ID
 operationId: stories_getById
 description: Повертає деталі історії за її унікальним ідентифікатором.
+security: []
 
 parameters:
   - name: storyId

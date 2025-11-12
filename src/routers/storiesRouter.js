@@ -4,7 +4,6 @@ import { validateBody } from '../middlewares/validateBody.js';
 import {
   createStoryController,
   deleteStoryController,
-  getCategoriesController,
   getStoriesController,
   getStoryByIdController,
   patchStoryController,
@@ -17,7 +16,6 @@ const router = Router();
 
 // public
 router.get('/', getStoriesController);
-router.get('/categories', getCategoriesController);
 router.get('/:storyId', isValidId, getStoryByIdController);
 
 // private

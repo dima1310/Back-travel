@@ -5,7 +5,7 @@ operationId: auth_refresh
 description: >
   Приймає HttpOnly cookies `refreshToken` та `sessionId` і випускає новий `accessToken`.
   У відповіді сервер оновлює три cookies: `accessToken`, `refreshToken`, `sessionId` з новими строками життя.
-security: [] # публичный endpoint, перекрывает глобальную защиту
+security: []
 parameters:
   - name: refreshToken
     in: cookie

@@ -8,15 +8,17 @@ info:
     url: https://opensource.org/license/mit/
 
 servers:
-  - url: http://localhost:3000
+  - url: https://podorozhniky-back.onrender.com
 
 tags:
   - name: Auth
-    description: Аутентификация и управление сессией
+    description: Аутентифікація та управління сесією
   - name: Stories
-    description: Операции с историями
+    description: Операції з істріями
   - name: Users
-    description: Пользователи и профили
+    description: Користувачі і профілі
+  - name: Categories
+    description: Категорії історій
 
 security:
   - cookieAuth: []
@@ -44,10 +46,6 @@ paths:
       $ref: ./paths/stories/get.yaml
     post:
       $ref: ./paths/stories/post.yaml
-
-  /stories/categories:
-    get:
-      $ref: ./paths/stories/categories/get.yaml
 
   /stories/{storyId}:
     parameters:
@@ -88,6 +86,10 @@ paths:
       $ref: ./paths/users/saved-story/{id}/post.yaml
     delete:
       $ref: ./paths/users/saved-story/{id}/delete.yaml
+
+  /categories:
+    get:
+      $ref: ./paths/categories/get.yaml
 
 components:
   securitySchemes:

@@ -2,10 +2,10 @@
     "item": [
         {
             "name": "Auth",
-            "description": "Аутентификация и управление сессией",
+            "description": "Аутентифікація та управління сесією",
             "item": [
                 {
-                    "id": "40ce95f2-62d6-4ae6-96c6-25a84c81ee42",
+                    "id": "0cb1f19e-5ecb-46a2-b5fa-d86211772f5e",
                     "name": "Логін",
                     "request": {
                         "name": "Логін",
@@ -46,7 +46,7 @@
                     },
                     "response": [
                         {
-                            "id": "d0dbebce-2f4c-40c2-a8a2-1272b04565db",
+                            "id": "996a3673-0b28-4915-af70-0d11b7982173",
                             "name": "OK (Set-Cookie: accessToken, refreshToken, sessionId)",
                             "originalRequest": {
                                 "url": {
@@ -112,7 +112,7 @@
                             "_postman_previewlanguage": "json"
                         },
                         {
-                            "id": "87f09d64-a556-491b-8fd3-31c982543e21",
+                            "id": "a99a64f9-dffa-43ba-aca4-ca1c45df3072",
                             "name": "Bad Request",
                             "originalRequest": {
                                 "url": {
@@ -169,7 +169,7 @@
                             "_postman_previewlanguage": "json"
                         },
                         {
-                            "id": "4b89b4c6-01fb-492b-8b69-46e4f2d2353c",
+                            "id": "78ccc0f7-2f3b-452a-9221-8308dbf55544",
                             "name": "Unauthorized",
                             "originalRequest": {
                                 "url": {
@@ -232,7 +232,7 @@
                     }
                 },
                 {
-                    "id": "9e86e264-1e7b-433a-8807-7f03e68b572d",
+                    "id": "a9fd4030-ded8-4cc9-8581-1815dc4660db",
                     "name": "Реєстрація користувача",
                     "request": {
                         "name": "Реєстрація користувача",
@@ -276,7 +276,7 @@
                     },
                     "response": [
                         {
-                            "id": "b79e7cf6-7880-480f-a417-1ebcb9235065",
+                            "id": "30e31548-3aef-4880-9c11-6e66c6d0f2b5",
                             "name": "Successfully registered a user",
                             "originalRequest": {
                                 "url": {
@@ -333,7 +333,7 @@
                             "_postman_previewlanguage": "json"
                         },
                         {
-                            "id": "33efd3ad-2167-4214-89eb-9abfe800c5ac",
+                            "id": "95927b68-8416-420f-92f1-24814df69c30",
                             "name": "Bad Request",
                             "originalRequest": {
                                 "url": {
@@ -390,7 +390,7 @@
                             "_postman_previewlanguage": "json"
                         },
                         {
-                            "id": "2742b1e2-5a89-4e15-96e1-34b453a0d08a",
+                            "id": "f09e0fa4-d8b3-44bd-91c6-4c3bcf59c7fc",
                             "name": "Email already in use",
                             "originalRequest": {
                                 "url": {
@@ -447,7 +447,7 @@
                             "_postman_previewlanguage": "json"
                         },
                         {
-                            "id": "51af85e1-2fa2-4b63-bfd9-c1579f4e2362",
+                            "id": "74230eae-1cb0-4a21-b2fb-26ba61f2fea8",
                             "name": "Server error",
                             "originalRequest": {
                                 "url": {
@@ -510,7 +510,7 @@
                     }
                 },
                 {
-                    "id": "ab68edbf-d619-4ed3-b5d2-b1da951b16a4",
+                    "id": "c9e2d769-d924-4827-8c79-bb20211ab861",
                     "name": "Оновлення сесії (refresh)",
                     "request": {
                         "name": "Оновлення сесії (refresh)",
@@ -541,7 +541,7 @@
                     },
                     "response": [
                         {
-                            "id": "e7d2d3b5-b764-44b3-a9d7-c494e20ede1f",
+                            "id": "805d7a9a-4225-48cb-8e6d-1a97abb59915",
                             "name": "Successfully refreshed a session",
                             "originalRequest": {
                                 "url": {
@@ -594,7 +594,7 @@
                             "_postman_previewlanguage": "json"
                         },
                         {
-                            "id": "44c6188a-b701-4d39-9c6a-490914134199",
+                            "id": "e0c662e6-3673-49a2-b8f2-c23f0411aa4d",
                             "name": "Unauthorized",
                             "originalRequest": {
                                 "url": {
@@ -638,7 +638,7 @@
                             "_postman_previewlanguage": "json"
                         },
                         {
-                            "id": "7bdf405f-332f-4148-b490-2f56be5af3af",
+                            "id": "b0d7466c-c7c0-413f-a581-5eeef7a6059a",
                             "name": "Server error",
                             "originalRequest": {
                                 "url": {
@@ -688,7 +688,7 @@
                     }
                 },
                 {
-                    "id": "1b39dab7-beee-413a-bb97-e0ff11210c51",
+                    "id": "3851d944-8c4b-4c99-a330-27b4c8c457c7",
                     "name": "Вихід із системи (logout)",
                     "request": {
                         "name": "Вихід із системи (logout)",
@@ -719,7 +719,7 @@
                     },
                     "response": [
                         {
-                            "id": "3a8c8d6b-55e4-4e08-935d-72604d00c02d",
+                            "id": "7daf6a9f-e068-48a5-bc1d-d004edab431c",
                             "name": "No Content — cookies cleared",
                             "originalRequest": {
                                 "url": {
@@ -763,7 +763,7 @@
                             "_postman_previewlanguage": "text"
                         },
                         {
-                            "id": "895c7a90-836e-4969-aa9b-cc3387e457da",
+                            "id": "f339b414-a6fe-46ab-af4c-e590026835d8",
                             "name": "Bad Request",
                             "originalRequest": {
                                 "url": {
@@ -807,7 +807,7 @@
                             "_postman_previewlanguage": "json"
                         },
                         {
-                            "id": "6bf5d228-848a-49fe-b73c-e49ad0c751ca",
+                            "id": "4cca3016-6037-4a5f-b200-3b499ef3c80d",
                             "name": "Server error",
                             "originalRequest": {
                                 "url": {
@@ -860,10 +860,10 @@
         },
         {
             "name": "Stories",
-            "description": "Операции с историями",
+            "description": "Операції з істріями",
             "item": [
                 {
-                    "id": "ca633098-7978-4003-a401-0f8b7eeb5a08",
+                    "id": "fff4950a-52cc-49ab-8b84-91a4f8023ffa",
                     "name": "Отримати список історій",
                     "request": {
                         "name": "Отримати список історій",
@@ -936,7 +936,7 @@
                     },
                     "response": [
                         {
-                            "id": "6fb147e2-e137-4109-9795-f4436464a229",
+                            "id": "69fe89e7-2868-4e0b-aea9-b7b892aec489",
                             "name": "OK",
                             "originalRequest": {
                                 "url": {
@@ -1025,7 +1025,7 @@
                             "_postman_previewlanguage": "json"
                         },
                         {
-                            "id": "be4f941e-07c2-4eb7-8c0e-3dd3c1540c37",
+                            "id": "bbbec988-0f14-4413-87d0-5cee35727435",
                             "name": "Bad Request",
                             "originalRequest": {
                                 "url": {
@@ -1120,7 +1120,7 @@
                     }
                 },
                 {
-                    "id": "7e938695-a109-4f1d-8c31-9ba792a32f81",
+                    "id": "f06edfd6-f836-48d0-80c5-8e1bc4045122",
                     "name": "Створити історію",
                     "request": {
                         "name": "Створити історію",
@@ -1206,7 +1206,7 @@
                     },
                     "response": [
                         {
-                            "id": "9788704b-66ac-4359-8ef5-82afde1d8879",
+                            "id": "9b8423b9-a019-4526-9949-302038d3d468",
                             "name": "Created",
                             "originalRequest": {
                                 "url": {
@@ -1292,7 +1292,7 @@
                             "_postman_previewlanguage": "json"
                         },
                         {
-                            "id": "09e32a73-2280-4f37-9f9f-6052fbb27d38",
+                            "id": "d61d0a67-8e9e-4d7c-84c5-933975c996b9",
                             "name": "Bad Request",
                             "originalRequest": {
                                 "url": {
@@ -1378,7 +1378,7 @@
                             "_postman_previewlanguage": "json"
                         },
                         {
-                            "id": "87af28aa-b2af-46be-a5ea-e9a7c08e312a",
+                            "id": "137eb56a-be29-481c-a2b6-dfbdd2bddc96",
                             "name": "Unauthorized",
                             "originalRequest": {
                                 "url": {
@@ -1470,132 +1470,7 @@
                     }
                 },
                 {
-                    "id": "027f9bf8-2298-46b0-b545-fb02d91d7e79",
-                    "name": "Отримати список категорій",
-                    "request": {
-                        "name": "Отримати список категорій",
-                        "description": {
-                            "content": "Отримання всіх доступних категорій історій.",
-                            "type": "text/plain"
-                        },
-                        "url": {
-                            "path": [
-                                "stories",
-                                "categories"
-                            ],
-                            "host": [
-                                "{{baseUrl}}"
-                            ],
-                            "query": [],
-                            "variable": []
-                        },
-                        "header": [
-                            {
-                                "key": "Accept",
-                                "value": "application/json"
-                            }
-                        ],
-                        "method": "GET",
-                        "body": {},
-                        "auth": null
-                    },
-                    "response": [
-                        {
-                            "id": "ca1b3853-3d96-4498-aaff-c2397d7dbdb6",
-                            "name": "OK",
-                            "originalRequest": {
-                                "url": {
-                                    "path": [
-                                        "stories",
-                                        "categories"
-                                    ],
-                                    "host": [
-                                        "{{baseUrl}}"
-                                    ],
-                                    "query": [],
-                                    "variable": []
-                                },
-                                "header": [
-                                    {
-                                        "key": "Accept",
-                                        "value": "application/json"
-                                    },
-                                    {
-                                        "description": {
-                                            "content": "Added as a part of security scheme: apikey",
-                                            "type": "text/plain"
-                                        },
-                                        "key": "accessToken",
-                                        "value": "<API Key>"
-                                    }
-                                ],
-                                "method": "GET",
-                                "body": {}
-                            },
-                            "status": "OK",
-                            "code": 200,
-                            "header": [
-                                {
-                                    "key": "Content-Type",
-                                    "value": "application/json"
-                                }
-                            ],
-                            "body": "{\n  \"status\": \"<integer>\",\n  \"message\": \"<string>\",\n  \"data\": [\n    {\n      \"_id\": \"<string>\",\n      \"name\": \"<string>\"\n    },\n    {\n      \"_id\": \"<string>\",\n      \"name\": \"<string>\"\n    }\n  ]\n}",
-                            "cookie": [],
-                            "_postman_previewlanguage": "json"
-                        },
-                        {
-                            "id": "690b6f02-1fae-4dff-93fd-d7050789724c",
-                            "name": "Bad Request",
-                            "originalRequest": {
-                                "url": {
-                                    "path": [
-                                        "stories",
-                                        "categories"
-                                    ],
-                                    "host": [
-                                        "{{baseUrl}}"
-                                    ],
-                                    "query": [],
-                                    "variable": []
-                                },
-                                "header": [
-                                    {
-                                        "key": "Accept",
-                                        "value": "application/json"
-                                    },
-                                    {
-                                        "description": {
-                                            "content": "Added as a part of security scheme: apikey",
-                                            "type": "text/plain"
-                                        },
-                                        "key": "accessToken",
-                                        "value": "<API Key>"
-                                    }
-                                ],
-                                "method": "GET",
-                                "body": {}
-                            },
-                            "status": "Bad Request",
-                            "code": 400,
-                            "header": [
-                                {
-                                    "key": "Content-Type",
-                                    "value": "application/json"
-                                }
-                            ],
-                            "body": "{\n  \"status\": \"<integer>\",\n  \"message\": \"<string>\",\n  \"data\": {}\n}",
-                            "cookie": [],
-                            "_postman_previewlanguage": "json"
-                        }
-                    ],
-                    "event": [],
-                    "protocolProfileBehavior": {
-                        "disableBodyPruning": true
-                    }
-                },
-                {
-                    "id": "94d36db5-e8b3-4275-b02b-9319b4af4759",
+                    "id": "303f8453-13b7-43a4-9b36-034d5a1aa2e0",
                     "name": "Отримати історію за ID",
                     "request": {
                         "name": "Отримати історію за ID",
@@ -1615,7 +1490,7 @@
                             "variable": [
                                 {
                                     "type": "any",
-                                    "value": "4cc9b83fa8ebb327cc12d224",
+                                    "value": "e63797d5fa79e955274a7e27",
                                     "key": "storyId",
                                     "disabled": false,
                                     "description": {
@@ -1637,7 +1512,7 @@
                     },
                     "response": [
                         {
-                            "id": "564730a2-c294-4e0b-abb3-b4e5d6729e9b",
+                            "id": "314ac340-ac96-4a56-b803-dd2858b68019",
                             "name": "OK",
                             "originalRequest": {
                                 "url": {
@@ -1681,7 +1556,7 @@
                             "_postman_previewlanguage": "json"
                         },
                         {
-                            "id": "be47562a-9560-43c2-89ef-eaddec0cc850",
+                            "id": "e01722d4-6d7a-4468-bdb2-cf5602f5c3d7",
                             "name": "Bad Request",
                             "originalRequest": {
                                 "url": {
@@ -1725,7 +1600,7 @@
                             "_postman_previewlanguage": "json"
                         },
                         {
-                            "id": "61252fb4-43a3-46cf-bd80-46a1d436023b",
+                            "id": "45d7747a-2167-4574-9297-ce66a611c685",
                             "name": "Not Found",
                             "originalRequest": {
                                 "url": {
@@ -1775,7 +1650,7 @@
                     }
                 },
                 {
-                    "id": "e5407a94-c2bf-4845-9f0f-f4e46192767c",
+                    "id": "7dd02706-f72f-4b33-bc09-f14b3b762d30",
                     "name": "Редагувати історію (лише власник)",
                     "request": {
                         "name": "Редагувати історію (лише власник)",
@@ -1876,7 +1751,7 @@
                     },
                     "response": [
                         {
-                            "id": "9dae134f-c10b-4e12-b077-df2812f13b9d",
+                            "id": "13f8862e-abc1-40a6-b951-619a6060cb2d",
                             "name": "Updated",
                             "originalRequest": {
                                 "url": {
@@ -1963,7 +1838,7 @@
                             "_postman_previewlanguage": "json"
                         },
                         {
-                            "id": "248cbf2e-6773-476f-a7d2-37fdcead70f3",
+                            "id": "a9c5db85-b096-4bce-af9f-937190b0e38e",
                             "name": "Bad Request",
                             "originalRequest": {
                                 "url": {
@@ -2050,7 +1925,7 @@
                             "_postman_previewlanguage": "json"
                         },
                         {
-                            "id": "66110a46-8ab4-4540-a63a-1e5d320a6cb6",
+                            "id": "cb516093-21fb-4e3b-a105-b4265184c953",
                             "name": "Unauthorized",
                             "originalRequest": {
                                 "url": {
@@ -2137,7 +2012,7 @@
                             "_postman_previewlanguage": "json"
                         },
                         {
-                            "id": "2d316aaa-9c6f-4108-b6fb-68b560ab5cd9",
+                            "id": "e955efd1-d538-48bd-b587-d372e4550a24",
                             "name": "Forbidden",
                             "originalRequest": {
                                 "url": {
@@ -2224,7 +2099,7 @@
                             "_postman_previewlanguage": "json"
                         },
                         {
-                            "id": "668d6107-613f-4f1b-8c2c-aa170fe920a1",
+                            "id": "8378611b-68e9-4af7-a945-e4fa48a12e0c",
                             "name": "Not Found",
                             "originalRequest": {
                                 "url": {
@@ -2317,7 +2192,7 @@
                     }
                 },
                 {
-                    "id": "ac3c77ca-d778-42e0-9dcd-8031d5d94c4b",
+                    "id": "dd9f5499-3bde-4ee7-9760-18a786925fc7",
                     "name": "Видалити історію (лише власник)",
                     "request": {
                         "name": "Видалити історію (лише власник)",
@@ -2334,7 +2209,7 @@
                             "variable": [
                                 {
                                     "type": "any",
-                                    "value": "4cc9b83fa8ebb327cc12d224",
+                                    "value": "e63797d5fa79e955274a7e27",
                                     "key": "storyId",
                                     "disabled": false,
                                     "description": {
@@ -2372,7 +2247,7 @@
                     },
                     "response": [
                         {
-                            "id": "a47889cd-d507-4a72-8404-23a8ee0e59ea",
+                            "id": "0084ecdb-4781-42a5-8864-f6b6634cfcbe",
                             "name": "No Content",
                             "originalRequest": {
                                 "url": {
@@ -2406,7 +2281,7 @@
                             "_postman_previewlanguage": "text"
                         },
                         {
-                            "id": "fa3ab6c1-a7f7-4006-9185-8e1196e6ee46",
+                            "id": "d81af48c-ebe9-495d-9c2d-db362388e530",
                             "name": "Unauthorized",
                             "originalRequest": {
                                 "url": {
@@ -2450,7 +2325,7 @@
                             "_postman_previewlanguage": "json"
                         },
                         {
-                            "id": "e3ae9fa5-1c10-4166-8fa3-4a2390af2b89",
+                            "id": "2f48f2bf-fc65-4655-8d14-9f7964446860",
                             "name": "Forbidden",
                             "originalRequest": {
                                 "url": {
@@ -2494,7 +2369,7 @@
                             "_postman_previewlanguage": "json"
                         },
                         {
-                            "id": "de07962f-32d8-4579-a8db-d142a371b160",
+                            "id": "7a08c367-a820-4c4f-b81b-d803ca96fc0c",
                             "name": "Not Found",
                             "originalRequest": {
                                 "url": {
@@ -2547,10 +2422,10 @@
         },
         {
             "name": "Users",
-            "description": "Пользователи и профили",
+            "description": "Користувачі і профілі",
             "item": [
                 {
-                    "id": "2c556ada-a6c6-4f1a-8215-c960a48d9d3a",
+                    "id": "e72a26e0-228c-48b7-85de-8fa473805460",
                     "name": "Отримати список авторів (публічно)",
                     "request": {
                         "name": "Отримати список авторів (публічно)",
@@ -2599,7 +2474,7 @@
                     },
                     "response": [
                         {
-                            "id": "0ac8988c-38c8-457f-9ff6-ec81d8f8ce10",
+                            "id": "7ce62e1e-b40b-476a-a5e9-dae2743317ba",
                             "name": "OK",
                             "originalRequest": {
                                 "url": {
@@ -2661,7 +2536,7 @@
                             "_postman_previewlanguage": "json"
                         },
                         {
-                            "id": "1361f768-85e1-4999-8896-d892d4d6b13f",
+                            "id": "d2541678-a548-471c-961a-1c04fdbcfc36",
                             "name": "Bad Request",
                             "originalRequest": {
                                 "url": {
@@ -2729,7 +2604,7 @@
                     }
                 },
                 {
-                    "id": "a0bf75ea-dd10-4550-8b5b-1b59a7776f11",
+                    "id": "fda83e5a-bcb9-4de1-917d-bfd83039d6bd",
                     "name": "Поточний користувач (приватно)",
                     "request": {
                         "name": "Поточний користувач (приватно)",
@@ -2773,7 +2648,7 @@
                     },
                     "response": [
                         {
-                            "id": "7213998e-a795-42f6-bda1-e99fe792b3b1",
+                            "id": "80a4d006-d853-4971-915b-a4ae74b3a394",
                             "name": "OK",
                             "originalRequest": {
                                 "url": {
@@ -2817,7 +2692,7 @@
                             "_postman_previewlanguage": "json"
                         },
                         {
-                            "id": "d346eca8-f3a4-4939-9e96-785f9e073434",
+                            "id": "cfbc4d80-f26d-44fa-b12e-43822fe7fb6c",
                             "name": "Unauthorized",
                             "originalRequest": {
                                 "url": {
@@ -2867,7 +2742,7 @@
                     }
                 },
                 {
-                    "id": "0caeb21a-6897-41bd-947e-51706e1ab69c",
+                    "id": "fb02a300-9d6b-4ba2-aee0-96674c45e6f2",
                     "name": "Отримати публічний профіль користувача та його історії",
                     "request": {
                         "name": "Отримати публічний профіль користувача та його історії",
@@ -2887,7 +2762,7 @@
                             "variable": [
                                 {
                                     "type": "any",
-                                    "value": "4cc9b83fa8ebb327cc12d224",
+                                    "value": "e63797d5fa79e955274a7e27",
                                     "key": "userId",
                                     "disabled": false,
                                     "description": {
@@ -2909,7 +2784,7 @@
                     },
                     "response": [
                         {
-                            "id": "6ee0e925-2f2d-462e-9ad9-18d8a71d0f95",
+                            "id": "7b8ac49d-9bdb-4c80-8146-065e4bc08c07",
                             "name": "OK",
                             "originalRequest": {
                                 "url": {
@@ -2953,7 +2828,7 @@
                             "_postman_previewlanguage": "json"
                         },
                         {
-                            "id": "7af3a218-6540-41ba-b652-d1f8d80d99ee",
+                            "id": "e380571d-4099-4cc3-9cc4-a845c9c2dbe4",
                             "name": "Bad Request",
                             "originalRequest": {
                                 "url": {
@@ -2997,7 +2872,7 @@
                             "_postman_previewlanguage": "json"
                         },
                         {
-                            "id": "d51566ad-0715-46f5-a860-d0b03824b7e2",
+                            "id": "96b749c9-1fb1-41cd-91b5-b48b15ba63f5",
                             "name": "Not Found",
                             "originalRequest": {
                                 "url": {
@@ -3047,7 +2922,7 @@
                     }
                 },
                 {
-                    "id": "f799d7ad-b8d7-4500-a3d4-dd04ab24d3fb",
+                    "id": "797c11c0-f414-47a4-a1c4-b3593bccc665",
                     "name": "Оновити дані користувача (name/email/bio/socialLinks)",
                     "request": {
                         "name": "Оновити дані користувача (name/email/bio/socialLinks)",
@@ -3104,7 +2979,7 @@
                     },
                     "response": [
                         {
-                            "id": "3f4b8bd8-d7e5-4954-a667-35e2228b9bc0",
+                            "id": "d1fe09bd-3dfc-456a-81ea-1134d8c31ec1",
                             "name": "Updated",
                             "originalRequest": {
                                 "url": {
@@ -3161,7 +3036,7 @@
                             "_postman_previewlanguage": "json"
                         },
                         {
-                            "id": "6a578e5b-8b89-4f43-8367-6272007a6ca7",
+                            "id": "40812f44-f897-4fc5-acc0-a31dc70dbd37",
                             "name": "Bad Request",
                             "originalRequest": {
                                 "url": {
@@ -3218,7 +3093,7 @@
                             "_postman_previewlanguage": "json"
                         },
                         {
-                            "id": "e3701109-060f-4dc1-9216-31768376e041",
+                            "id": "60d7b51d-e3ad-44da-827f-02ef60af3225",
                             "name": "Unauthorized",
                             "originalRequest": {
                                 "url": {
@@ -3281,7 +3156,7 @@
                     }
                 },
                 {
-                    "id": "e65c8a17-2053-4d45-b5f7-9372407be7c8",
+                    "id": "7944cd02-46c0-460f-8f08-0b92e3a02166",
                     "name": "Оновити аватар (file або url)",
                     "request": {
                         "name": "Оновити аватар (file або url)",
@@ -3341,7 +3216,7 @@
                     },
                     "response": [
                         {
-                            "id": "59025fa0-0dfc-4241-a054-9f4f574dec13",
+                            "id": "868828fc-22e7-4017-974e-4a0f5d0ae6a9",
                             "name": "Updated",
                             "originalRequest": {
                                 "url": {
@@ -3401,7 +3276,7 @@
                             "_postman_previewlanguage": "json"
                         },
                         {
-                            "id": "820cd02f-c03c-4a0a-93f2-1a3b42b00c8d",
+                            "id": "7f1222ea-9de4-42fe-bac2-73f87a29d119",
                             "name": "Bad Request",
                             "originalRequest": {
                                 "url": {
@@ -3461,7 +3336,7 @@
                             "_postman_previewlanguage": "json"
                         },
                         {
-                            "id": "8b604add-0982-4563-b723-0784bb42987e",
+                            "id": "5449c197-d12a-4f2e-8829-454f7d3ae289",
                             "name": "Unauthorized",
                             "originalRequest": {
                                 "url": {
@@ -3527,7 +3402,7 @@
                     }
                 },
                 {
-                    "id": "02dc62f2-216b-4951-99e2-b09e696c9c3e",
+                    "id": "5f919854-543e-40a4-9c7a-09e93a842684",
                     "name": "Додати історію до збережених",
                     "request": {
                         "name": "Додати історію до збережених",
@@ -3583,7 +3458,7 @@
                     },
                     "response": [
                         {
-                            "id": "e7f2f49e-62b5-48fb-80fa-21fc1ad705f9",
+                            "id": "ed798b8b-1c76-4905-977d-c16b22562b36",
                             "name": "OK",
                             "originalRequest": {
                                 "url": {
@@ -3628,7 +3503,7 @@
                             "_postman_previewlanguage": "json"
                         },
                         {
-                            "id": "67ae04a0-48d2-4322-812f-3517423e9d96",
+                            "id": "148560bf-0f32-4099-88a4-a332ce87b75b",
                             "name": "Bad Request",
                             "originalRequest": {
                                 "url": {
@@ -3673,7 +3548,7 @@
                             "_postman_previewlanguage": "json"
                         },
                         {
-                            "id": "e5327b0e-cb7a-45e7-abed-368d430be2bd",
+                            "id": "25d4400a-0b9f-4cf8-89ee-e173c4f61fc0",
                             "name": "Unauthorized",
                             "originalRequest": {
                                 "url": {
@@ -3718,7 +3593,7 @@
                             "_postman_previewlanguage": "json"
                         },
                         {
-                            "id": "50861eed-7fc6-4238-89bf-c94794184cee",
+                            "id": "42b71c91-f799-4fc5-8eb8-f0cba0338e58",
                             "name": "Not Found",
                             "originalRequest": {
                                 "url": {
@@ -3769,7 +3644,7 @@
                     }
                 },
                 {
-                    "id": "c0899fe9-bd2d-4c44-b4fa-60d504a9f279",
+                    "id": "ea82a216-f1eb-437c-bf41-fbf0c54161d7",
                     "name": "Видалити історію із збережених",
                     "request": {
                         "name": "Видалити історію із збережених",
@@ -3825,7 +3700,7 @@
                     },
                     "response": [
                         {
-                            "id": "19c3ab53-7394-4a80-98dd-e3565e7913b4",
+                            "id": "776f665c-dadf-473f-8759-d81104678762",
                             "name": "OK",
                             "originalRequest": {
                                 "url": {
@@ -3870,7 +3745,7 @@
                             "_postman_previewlanguage": "json"
                         },
                         {
-                            "id": "fa7d349b-d294-41d3-a650-c22f8be4dd96",
+                            "id": "f18d362d-b69c-4802-bdcb-e58550e3955d",
                             "name": "Unauthorized",
                             "originalRequest": {
                                 "url": {
@@ -3915,7 +3790,7 @@
                             "_postman_previewlanguage": "json"
                         },
                         {
-                            "id": "52919cc5-d255-4f0a-8232-adecc9222c21",
+                            "id": "42b4612b-64a0-4f34-95b9-5fee12c34201",
                             "name": "Not Found",
                             "originalRequest": {
                                 "url": {
@@ -3966,6 +3841,134 @@
                     }
                 }
             ]
+        },
+        {
+            "name": "Categories",
+            "description": "Категорії історій",
+            "item": [
+                {
+                    "id": "4fd83ee7-f7ed-4cd1-90c3-a173e7e7aa74",
+                    "name": "Отримати список категорій",
+                    "request": {
+                        "name": "Отримати список категорій",
+                        "description": {
+                            "content": "Отримання всіх доступних категорій історій.",
+                            "type": "text/plain"
+                        },
+                        "url": {
+                            "path": [
+                                "categories"
+                            ],
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "query": [],
+                            "variable": []
+                        },
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "method": "GET",
+                        "body": {},
+                        "auth": null
+                    },
+                    "response": [
+                        {
+                            "id": "785573b8-bb0a-4ed4-a19a-d2479fafffc2",
+                            "name": "OK",
+                            "originalRequest": {
+                                "url": {
+                                    "path": [
+                                        "categories"
+                                    ],
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "query": [],
+                                    "variable": []
+                                },
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                    },
+                                    {
+                                        "description": {
+                                            "content": "Added as a part of security scheme: apikey",
+                                            "type": "text/plain"
+                                        },
+                                        "key": "accessToken",
+                                        "value": "<API Key>"
+                                    }
+                                ],
+                                "method": "GET",
+                                "body": {}
+                            },
+                            "status": "OK",
+                            "code": 200,
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json"
+                                }
+                            ],
+                            "body": "{\n  \"status\": \"<integer>\",\n  \"message\": \"<string>\",\n  \"data\": [\n    {\n      \"_id\": \"<string>\",\n      \"name\": \"<string>\"\n    },\n    {\n      \"_id\": \"<string>\",\n      \"name\": \"<string>\"\n    }\n  ]\n}",
+                            "cookie": [],
+                            "_postman_previewlanguage": "json"
+                        },
+                        {
+                            "id": "4621eedb-2d01-4970-808d-606c6510461a",
+                            "name": "Bad Request",
+                            "originalRequest": {
+                                "url": {
+                                    "path": [
+                                        "categories"
+                                    ],
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "query": [],
+                                    "variable": []
+                                },
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                    },
+                                    {
+                                        "description": {
+                                            "content": "Added as a part of security scheme: apikey",
+                                            "type": "text/plain"
+                                        },
+                                        "key": "accessToken",
+                                        "value": "<API Key>"
+                                    }
+                                ],
+                                "method": "GET",
+                                "body": {}
+                            },
+                            "status": "Bad Request",
+                            "code": 400,
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json"
+                                }
+                            ],
+                            "body": "{\n  \"status\": \"<integer>\",\n  \"message\": \"<string>\",\n  \"data\": {}\n}",
+                            "cookie": [],
+                            "_postman_previewlanguage": "json"
+                        }
+                    ],
+                    "event": [],
+                    "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                    }
+                }
+            ]
         }
     ],
     "auth": {
@@ -3992,11 +3995,11 @@
     "variable": [
         {
             "key": "baseUrl",
-            "value": "http://localhost:3000"
+            "value": "https://podorozhniky-back.onrender.com"
         }
     ],
     "info": {
-        "_postman_id": "f8f845bb-82c9-4080-b9a9-bc93011cc91f",
+        "_postman_id": "ab766601-2da3-4d07-a40e-5cd29b1701d9",
         "name": "Podorozhnyky API",
         "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
         "description": {
