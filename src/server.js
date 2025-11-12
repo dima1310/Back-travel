@@ -9,6 +9,7 @@ import { notFoundHandler } from './middlewares/notFoundHandler.js';
 import usersRouter from './routers/usersRouter.js';
 import storiesRouter from './routers/storiesRouter.js';
 import { authRouter } from './routers/auth.js';
+import categoriesRouter from './routers/categoriesRouter.js';
 
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -68,6 +69,7 @@ export const startServer = () => {
   // --- ROUTES ---
   app.use('/users', usersRouter);
   app.use('/stories', storiesRouter);
+  app.use('/categories', categoriesRouter);
   app.use('/auth', authRouter);
 
   app.get('/', (_req, res) => {

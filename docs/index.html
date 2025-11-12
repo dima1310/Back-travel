@@ -1,130 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
   <head>
     <meta charset="utf-8" />
-    <title>Podorozhnyky API Docs</title>
+    <title>API Reference | ReDoc</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" type="image/svg+xml" href="../public/favicon.svg" />
-
+    <link rel="icon" type="image/png" href="../public/favicon.svg" />
     <style>
-      :root {
-        --bg: #0f1115;
-        --fg: #e5e7eb;
-        --muted: #9ca3af;
-        --brand: #4f46e5;
-      }
       body {
         margin: 0;
-        background: var(--bg);
-        color: var(--fg);
-        font-family: ui-sans-serif, system-ui, Segoe UI, Roboto,
-          Apple Color Emoji, Noto Color Emoji, Helvetica, Arial, sans-serif;
-      }
-      .topbar {
-        position: sticky;
-        top: 0;
-        z-index: 10;
-        display: flex;
-        align-items: center;
-        gap: 14px;
-        padding: 10px 16px;
-        background: #0b0d12cc;
-        backdrop-filter: blur(6px);
-        border-bottom: 1px solid #1f2430;
-      }
-      .topbar img {
-        height: 22px;
-      }
-      .topbar h1 {
-        font-size: 15px;
-        font-weight: 600;
-        margin: 0;
-        letter-spacing: 0.2px;
-        color: var(--fg);
-      }
-      .spacer {
-        flex: 1;
-      }
-      .btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 8px 12px;
-        border: 1px solid #2b3242;
-        border-radius: 10px;
-        background: #141823;
-        color: var(--fg);
-        text-decoration: none;
-        font-size: 13px;
-      }
-      .btn:hover {
-        border-color: #394258;
-      }
-      .credit {
-        position: fixed;
-        right: 12px;
-        bottom: 10px;
-        color: var(--muted);
-        font-size: 12px;
-      }
-      .menu-content,
-      .api-content,
-      .sc-bXdtCk,
-      .sc-eDWCr {
-        background: var(--bg) !important;
+        padding: 0;
       }
     </style>
+    {{{redocHead}}}
   </head>
+
   <body>
-    <div class="topbar">
-      <img src="../public/favicon.svg" alt="logo" />
-      <h1>Podorozhnyky API</h1>
-      <div class="spacer"></div>
-      <a class="btn" href="./openapi.yaml" download>⬇️ YAML</a>
-      <a class="btn" href="./openapi.json" download>⬇️ JSON</a>
-    </div>
-
-    <redoc id="redoc-container"></redoc>
-
-    <div class="credit">Doc powered by ReDoc</div>
-
-    <script src="https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js"></script>
-    <script>
-      Redoc.init(
-        './openapi.yaml',
-        {
-          hideDownloadButton: true,
-          expandResponses: '200,201,4xx',
-          pathInMiddlePanel: true,
-          jsonSampleExpandLevel: 1,
-          theme: {
-            colors: {
-              primary: { main: '#4f46e5' },
-              text: { primary: '#e5e7eb', secondary: '#9ca3af' },
-              border: { dark: '#1f2430', light: '#1f2430' },
-              http: {
-                get: '#22c55e',
-                post: '#3b82f6',
-                put: '#eab308',
-                delete: '#ef4444',
-              },
-            },
-            typography: {
-              fontSize: '14px',
-              fontFamily:
-                'ui-sans-serif, system-ui, Segoe UI, Roboto, Arial, sans-serif',
-              headings: { fontFamily: 'inherit' },
-              code: {
-                fontFamily:
-                  'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace',
-              },
-            },
-            sidebar: { backgroundColor: '#0f1115' },
-            rightPanel: { backgroundColor: '#0f1115' },
-          },
-        },
-        document.getElementById('redoc-container'),
-      );
-    </script>
+    {{{redocHTML}}}
   </body>
 </html>

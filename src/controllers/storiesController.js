@@ -7,7 +7,6 @@ import {
   deleteStory as deleteStorySvc,
 } from '../services/story.js';
 import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
-import { CategoriesCollection } from '../models/categories.js';
 
 export const getStoriesController = async (req, res, next) => {
   try {
@@ -105,14 +104,5 @@ export const deleteStoryController = async (req, res, next) => {
     res.status(204).send();
   } catch (err) {
     next(err);
-  }
-};
-
-export const getCategoriesController = async (_req, res, next) => {
-  try {
-    const categories = await CategoriesCollection.find({}, { name: 1 }).lean();
-    res.json({ status: 200, message: 'OK', data: categories });
-  } catch (e) {
-    next(e);
   }
 };
