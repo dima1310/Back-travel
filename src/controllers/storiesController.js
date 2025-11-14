@@ -1,3 +1,4 @@
+// src/controllers/storiesController.js (путь у тебя может отличаться)
 import createHttpError from 'http-errors';
 import {
   getAllStories,
@@ -7,10 +8,12 @@ import {
   deleteStory as deleteStorySvc,
 } from '../services/story.js';
 import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
+import { CategoriesCollection } from '../models/categories.js';
 
 export const getStoriesController = async (req, res, next) => {
   try {
     const result = await getAllStories(req.query);
+
     res.json({
       status: 200,
       message: 'Successfully found stories.',
@@ -25,7 +28,9 @@ export const getStoryByIdController = async (req, res, next) => {
   try {
     const { storyId } = req.params;
     const story = await getStoryByIdSvc(storyId);
+
     if (!story) throw createHttpError(404, 'Story not found');
+
     res.json({
       status: 200,
       message: `Successfully found story with id ${storyId}`,
@@ -40,20 +45,25 @@ export const createStoryController = async (req, res, next) => {
   try {
     const payload = { ...req.body };
 
+    // картинка обязательна
     if (req.file) {
       payload.img = await saveFileToCloudinary(req.file);
     } else {
       throw createHttpError(400, 'Зображення є обов’язковим');
     }
-
     const cat = await CategoriesCollection.findOne({ name: payload.category });
-    if (!cat)
-      throw createHttpError(400, `Категорія "${payload.category}" не знайдена`);
+    if (!cat) {
+      throw createHttpError(
+        400,
+        `Категорія "${payload.category}" не знайдена`,
+      );
+    }
 
     payload.category = cat._id;
     payload.ownerId = req.user._id;
 
     const story = await createStorySvc(payload);
+
     res.status(201).json({
       status: 201,
       message: 'Successfully created a story',
@@ -69,17 +79,20 @@ export const patchStoryController = async (req, res, next) => {
     const { storyId } = req.params;
     const payload = { ...req.body };
 
-    if (req.file) payload.img = await saveFileToCloudinary(req.file);
+    if (req.file) {
+      payload.img = await saveFileToCloudinary(req.file);
+    }
 
     if (payload.category) {
       const cat = await CategoriesCollection.findOne({
         name: payload.category,
       });
-      if (!cat)
+      if (!cat) {
         throw createHttpError(
           400,
           `Категорія "${payload.category}" не знайдена`,
         );
+      }
       payload.category = cat._id;
     }
 
@@ -100,7 +113,9 @@ export const deleteStoryController = async (req, res, next) => {
   try {
     const { storyId } = req.params;
     const deleted = await deleteStorySvc(storyId, req.user);
+
     if (!deleted) throw createHttpError(404, 'Story not found');
+
     res.status(204).send();
   } catch (err) {
     next(err);
