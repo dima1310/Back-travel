@@ -100,19 +100,27 @@ export const getCurrentUser = async (req, res, next) => {
 
     const user = await UserCollection.findById(userId)
       .select('name email avatar bio savedStories settings socialLinks')
-      .populate({
-        path: 'savedStories',
-        model: 'story',
-        select: 'title img date favoriteCount',
-      })
       .lean();
 
     if (!user) throw createHttpError(404, 'User not found');
+    
+    const savedStories = Array.isArray(user.savedStories)
+      ? user.savedStories.map((id) => id.toString())
+      : [];
 
     res.json({
       status: 200,
       message: 'Successfully found current user!',
-      data: user,
+      data: {
+        _id: user._id.toString(),
+        name: user.name,
+        email: user.email,
+        avatar: user.avatar,
+        bio: user.bio,
+        settings: user.settings,
+        socialLinks: user.socialLinks,
+        savedStories,
+      },
     });
   } catch (error) {
     next(error);
