@@ -46,24 +46,40 @@ export const getUsers = async (req, res, next) => {
 export const getUserById = async (req, res, next) => {
   try {
     const { userId } = req.params;
+    let u = await SeedUser.findById(userId).lean();
+    let fromRealUsers = false;
 
-    const u = await SeedUser.findById(userId).lean();
-    if (!u) throw createHttpError(404, 'User not found');
+    if (!u) {
+      const real = await UserCollection.findById(userId)
+        .select('name email avatar bio socialLinks')
+        .lean();
+
+      if (!real) throw createHttpError(404, 'User not found');
+
+      u = {
+        _id: real._id,
+        name: real.name,
+        email: real.email,
+        avatarUrl: real.avatar,
+        description: real.bio,
+        socialLinks: real.socialLinks ?? {},
+      };
+      fromRealUsers = true;
+    }
 
     const user = {
       _id: u._id,
       name: u.name,
-      email: '',
+      email: u.email ?? '',
       avatar: u.avatarUrl ?? '',
       bio: u.description ?? '',
-      socialLinks: {},
+      socialLinks: u.socialLinks ?? {},
     };
 
+    // истории для этого пользователя (логика одна и та же)
     const stories = await storyModel
       .find({ ownerId: userId })
-      .select(
-        'title description article img date favoriteCount category ownerId',
-      )
+      .select('title description article img date favoriteCount category ownerId')
       .populate('category', 'name')
       .lean();
 
