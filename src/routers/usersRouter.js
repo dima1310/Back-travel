@@ -24,10 +24,6 @@ import {
 
 const router = Router();
 
-// public
-router.get('/', validateQuery(getUsersQuerySchema), getUsers);
-router.get('/:userId', isValidId, getUserById);
-
 // private
 router.get('/current', authenticate, getCurrentUser);
 
@@ -43,5 +39,10 @@ router.patch(
 
 router.post('/saved-story/:id', authenticate, isValidId, addSavedArticle);
 router.delete('/saved-story/:id', authenticate, isValidId, removeSavedArticle);
+
+// public
+router.get('/', validateQuery(getUsersQuerySchema), getUsers);
+router.get('/:userId', isValidId, getUserById);
+
 
 export default router;
