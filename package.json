@@ -31,30 +31,30 @@
     "url": "https://github.com/dima1310/Back-travel/issues"
   },
   "homepage": "https://github.com/dima1310/Back-travel#readme",
-  "devDependencies": {
-    "@apidevtools/swagger-cli": "^4.0.4",
-    "@redocly/cli": "^2.11.1",
-    "js-yaml": "^4.1.0",
-    "nodemon": "^3.1.10",
-    "swagger-cli": "^4.0.4",
-    "swagger-ui-express": "^5.0.1",
-    "yamljs": "^0.3.0"
-  },
-  "dependencies": {
-    "bcrypt": "^6.0.0",
-    "cloudinary": "^2.8.0",
-    "cookie-parser": "^1.4.7",
-    "cors": "^2.8.5",
-    "dotenv": "^17.2.3",
-    "express": "^5.1.0",
-    "http-errors": "^2.0.0",
-    "joi": "^18.0.1",
-    "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.19.3",
-    "multer": "^1.4.5-lts.1",
-    "nodemailer": "^7.0.10",
-    "pino": "^10.1.0",
-    "pino-http": "^11.0.0",
-    "pino-pretty": "^13.1.2"
-  }
+"devDependencies": {
+  "@apidevtools/swagger-cli": "^4.0.4",
+  "@redocly/cli": "^2.11.1",
+  "js-yaml": "^4.1.0",
+  "nodemon": "^3.1.10",
+  "swagger-cli": "^4.0.4"
+},
+"dependencies": {
+  "bcrypt": "^6.0.0",
+  "cloudinary": "^2.8.0",
+  "cookie-parser": "^1.4.7",
+  "cors": "^2.8.5",
+  "dotenv": "^17.2.3",
+  "express": "^5.1.0",
+  "http-errors": "^2.0.0",
+  "joi": "^18.0.1",
+  "jsonwebtoken": "^9.0.2",
+  "mongoose": "^8.19.3",
+  "multer": "^1.4.5-lts.1",
+  "nodemailer": "^7.0.10",
+  "pino": "^10.1.0",
+  "pino-http": "^11.0.0",
+  "pino-pretty": "^13.1.2",
+  "swagger-ui-express": "^5.0.1",
+  "yamljs": "^0.3.0"
+}
 }
