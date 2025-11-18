@@ -17,19 +17,34 @@ import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
 
 const PORT = Number(process.env.PORT) || 3000;
-const ORIGIN = process.env.FRONTEND_URL || 'http://localhost:3000';
+
+const ALLOWED_ORIGINS = [
+  'http://localhost:3000',
+  'https://front-travellers.vercel.app',
+];
 
 export const startServer = () => {
   const app = express();
 
   // --- MIDDLEWARE ---
   app.use(express.json());
+
   app.use(
     cors({
-      origin: ORIGIN,
+      origin(origin, callback) {
+        if (!origin) return callback(null, true);
+
+        if (ALLOWED_ORIGINS.includes(origin)) {
+          return callback(null, true);
+        }
+
+        console.log('❌ CORS blocked for origin:', origin);
+        return callback(new Error('Not allowed by CORS'));
+      },
       credentials: true,
     }),
   );
+
   app.use(cookieParser());
 
   app.use(
